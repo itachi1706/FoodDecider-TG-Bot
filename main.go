@@ -1,25 +1,65 @@
 package main
 
 import (
-    "fmt"
+    "github.com/PaulSonOfLars/gotgbot/v2"
+    "github.com/PaulSonOfLars/gotgbot/v2/ext"
+    "github.com/joho/godotenv"
+    "log"
+    "os"
+    "time"
 )
 
-//TIP To run your code, right-click the code and select <b>Run</b>. Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.
-
 func main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined or highlighted text
-    // to see how GoLand suggests fixing it.
-    s := "gopher"
-    fmt.Println("Hello and welcome, %s!", s)
-
-    for i := 1; i <= 5; i++ {
-        //TIP You can try debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>. To start your debugging session,
-        // right-click your code in the editor and select the <b>Debug</b> option.
-        fmt.Println("i =", 100/i)
+    err := godotenv.Load()
+    if err != nil {
+        log.Println("Error loading .env file. Might not exist")
     }
-}
 
-//TIP See GoLand help at <a href="https://www.jetbrains.com/help/go/">jetbrains.com/help/go/</a>.
-// Also, you can try interactive lessons for GoLand by selecting 'Help | Learn IDE Features' from the main menu.
+    botToken := os.Getenv("BOT_TOKEN")
+    if botToken == "" {
+        panic("No BOT_TOKEN provided")
+    }
+
+    bot, err := gotgbot.NewBot(botToken, nil)
+    if err != nil {
+        panic("bot creation failed: " + err.Error())
+    }
+
+    // Create dispatching commands
+    dispatcher := ext.NewDispatcher(&ext.DispatcherOpts{
+        // If an error is returned by a handler, log it and continue going.
+        Error: func(b *gotgbot.Bot, ctx *ext.Context, err error) ext.DispatcherAction {
+            log.Println("an error occurred while handling update:", err.Error())
+            return ext.DispatcherActionNoop
+        },
+        MaxRoutines: ext.DefaultMaxRoutines,
+    })
+    updater := ext.NewUpdater(dispatcher, nil)
+
+    // TODO: Add commands here
+    InitCommands(dispatcher)
+    commandInstalled, err := bot.GetMyCommands(nil)
+    if err != nil {
+        panic("failed to get commands: " + err.Error())
+    }
+
+    err = updater.StartPolling(bot, &ext.PollingOpts{
+        DropPendingUpdates: true,
+        GetUpdatesOpts: &gotgbot.GetUpdatesOpts{
+            Timeout: 9,
+            RequestOpts: &gotgbot.RequestOpts{
+                Timeout: time.Second * 10,
+            },
+        },
+    })
+
+    if err != nil {
+        panic("polling failed: " + err.Error())
+    }
+
+    log.Printf("Bot %s started\n", bot.User.Username)
+    log.Printf("Bot Info: %#v\n", bot.User)
+    log.Printf("Commands available: %#v\n", commandInstalled)
+
+    updater.Idle() // Idle, to keep updates coming in, and avoid bot stopping.
+}
