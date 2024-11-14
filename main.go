@@ -1,6 +1,7 @@
 package main
 
 import (
+    "FoodDecider-TG-Bot/utils"
     "github.com/PaulSonOfLars/gotgbot/v2"
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
     "github.com/hellofresh/health-go/v5"
@@ -9,6 +10,8 @@ import (
     "net/http"
     "os"
     "time"
+
+    healthMysql "github.com/hellofresh/health-go/v5/checks/mysql"
 )
 
 func main() {
@@ -16,6 +19,8 @@ func main() {
     if err != nil {
         log.Println("Error loading .env file. Might not exist")
     }
+
+    setupDb()
 
     botToken := os.Getenv("BOT_TOKEN")
     if botToken == "" {
@@ -74,18 +79,14 @@ func addHealthCheck() {
     h, _ := health.New(health.WithComponent(health.Component{
         Name:    "tg-bot-food-decider",
         Version: "v1.0",
+    }), health.WithChecks(health.Config{
+        Name:      "database",
+        Timeout:   time.Second * 2,
+        SkipOnErr: false,
+        Check: healthMysql.New(healthMysql.Config{
+            DSN: utils.GetDbDSN(),
+        }),
     }))
-
-    // and then add some more if needed
-    // TODO: Ping MySQL
-    //h.Register(health.Config{
-    //    Name:      "mysql",
-    //    Timeout:   time.Second * 2,
-    //    SkipOnErr: false,
-    //    Check: healthMysql.New(healthMysql.Config{
-    //        DSN: "test:test@tcp(0.0.0.0:31726)/test?charset=utf8",
-    //    }),
-    //})
 
     http.Handle("/health", h.Handler())
     go func() {
@@ -96,4 +97,13 @@ func addHealthCheck() {
     }()
 
     log.Println("Health check server started on :9999")
+}
+
+func setupDb() {
+    log.Println("Setting up database connection")
+    db := utils.GetDbConnection()
+    if db == nil {
+        panic("failed to get db connection")
+    }
+    log.Println("Database connection established")
 }
