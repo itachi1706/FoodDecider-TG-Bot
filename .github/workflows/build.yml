@@ -1,0 +1,120 @@
+name: Build and Deploy
+
+on: ["push", "pull_request"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build Go Packages
+    strategy:
+      fail-fast: true
+      matrix:
+        arch: [amd64, arm64, arm]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Generate Swagger Docs
+        run: |
+          go mod download
+          go install github.com/swaggo/swag/cmd/swag@latest
+          swag init -md ./docs
+      - name: Build
+        env:
+          GOOS: linux
+          GOARCH: ${{ matrix.arch }}
+        run: go build -o outfile/$GOOS/$GOARCH/FoodDecider-TG-Bot
+      - name: Upload to same artifact if master branch
+        uses: actions/upload-artifact@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        with:
+          name: go-build-${{ matrix.arch }}
+          path: outfile/**/*
+          retention-days: 1
+  docker:
+    runs-on: ubuntu-latest
+    needs: [build]
+    name: Build and Push Docker Images for master branch
+    concurrency:
+      group: docker-${{ github.ref }}
+      cancel-in-progress: true
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: go-build-*
+          merge-multiple: true
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Manipulation of files
+        run: |
+          mkdir -p outfile/linux
+          mv linux/* outfile/linux
+          mkdir -p outfile/linux/arm/v7
+          cp outfile/linux/arm/FoodDecider-TG-Bot outfile/linux/arm/v7/FoodDecider-TG-Bot
+          ls -la
+      # TODO-FUTURE: Add Docker Build and Push commit scripts branch (COMMIT_HASH)
+      # TODO-FUTURE: Add Docker retag and Push staging scripts for master branch (staging)
+      # TODO-FUTURE: Add Docker retag and Push production scripts for release branch (prod)
+      - name: Build and push to release
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: itachi1706/personal-docker-images:tg-bot-food-decider
+  deploy:
+    # Auto deploy to Kubernetes (https://docs.digitalocean.com/products/kubernetes/how-to/deploy-using-github-actions/)
+    runs-on: ubuntu-latest
+    needs: [build, docker]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    concurrency:
+      group: deploy-${{ github.ref }}
+      cancel-in-progress: true
+    environment:
+      name: Production
+    name: Deploy to Kubernetes
+    env:
+      DEPLOYMENT_NAME: go-apis-v1
+      CLUSTER_NAME: ${{ vars.DIGITALOCEAN_K8S_CLUSTER_NAME }}
+      CLUSTER_NAMESPACE: ${{ vars.DIGITALOCEAN_K8S_CLUSTER_NAMESPACE }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      # TODO: Future, add deployment file update
+      #      - name: Update deployment file
+      #        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/<registry-name>/<repository_name>:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $CLUSTER_NAME
+      - name: Verify connection to cluster
+        run: kubectl cluster-info
+      - name: Verify nodes
+        run: kubectl get nodes
+      - name: Set default namespace
+        run: kubectl config set-context --current --namespace=$CLUSTER_NAMESPACE
+      - name: Deploy to DigitalOcean Kubernetes
+        run: kubectl apply -f $GITHUB_WORKSPACE/k8s
+      - name: Rerun deployment
+        run: kubectl rollout restart deployment $DEPLOYMENT_NAME
+      - name: Verify deployment
+        run: kubectl rollout status deployment $DEPLOYMENT_NAME
+      - name: Get information about pods, services and deployments
+        run: |
+          kubectl get pods
+          kubectl get services
+          kubectl get deployments

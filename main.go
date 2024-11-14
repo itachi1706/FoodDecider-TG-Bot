@@ -3,8 +3,10 @@ package main
 import (
     "github.com/PaulSonOfLars/gotgbot/v2"
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
+    "github.com/hellofresh/health-go/v5"
     "github.com/joho/godotenv"
     "log"
+    "net/http"
     "os"
     "time"
 )
@@ -61,5 +63,37 @@ func main() {
     log.Printf("Bot Info: %#v\n", bot.User)
     log.Printf("Commands available: %#v\n", commandInstalled)
 
+    addHealthCheck()
+
     updater.Idle() // Idle, to keep updates coming in, and avoid bot stopping.
+}
+
+func addHealthCheck() {
+    log.Println("Starting health check server")
+    // add some checks on instance creation
+    h, _ := health.New(health.WithComponent(health.Component{
+        Name:    "tg-bot-food-decider",
+        Version: "v1.0",
+    }))
+
+    // and then add some more if needed
+    // TODO: Ping MySQL
+    //h.Register(health.Config{
+    //    Name:      "mysql",
+    //    Timeout:   time.Second * 2,
+    //    SkipOnErr: false,
+    //    Check: healthMysql.New(healthMysql.Config{
+    //        DSN: "test:test@tcp(0.0.0.0:31726)/test?charset=utf8",
+    //    }),
+    //})
+
+    http.Handle("/health", h.Handler())
+    go func() {
+        err := http.ListenAndServe(":9999", nil)
+        if err != nil {
+            log.Println("Failed to start health check server")
+        }
+    }()
+
+    log.Println("Health check server started on :9999")
 }
