@@ -26,3 +26,10 @@ func replyUser(bot *gotgbot.Bot, ctx *ext.Context, message string, opt *gotgbot.
 
     return nil
 }
+
+func GetArgumentsFromMessage(ctx *ext.Context) []string {
+    message := ctx.EffectiveMessage.Text
+    messageList := SplitString(message)
+    // Remove the command from the list
+    return messageList[1:]
+}
