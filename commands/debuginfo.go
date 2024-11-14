@@ -4,10 +4,12 @@ import (
     "FoodDecider-TG-Bot/utils"
     "github.com/PaulSonOfLars/gotgbot/v2"
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
+    "log"
     "strconv"
 )
 
 func DebugInfoCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
+    log.Println("DebugInfo command called by " + ctx.EffectiveSender.Username())
     sender := ctx.EffectiveSender
     chat := ctx.EffectiveChat
 
