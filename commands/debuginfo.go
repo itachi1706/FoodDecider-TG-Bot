@@ -40,5 +40,20 @@ func DebugInfoCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     debugText += "Is Forum Mode: " + strconv.FormatBool(forum) + "\n"
     debugText += "Chat Info: " + group
 
+    // Additional check if user is admin in app
+    debugText += "\n\n***App Permissions***"
+    userId := sender.Id()
+    if utils.CheckIfAdmin(userId) {
+        debugText += "\nApp Admin: Yes"
+    } else {
+        debugText += "\nApp Admin: No"
+    }
+
+    if utils.CheckIfSuperAdmin(userId) {
+        debugText += "\nApp Super Admin: Yes"
+    } else {
+        debugText += "\nApp Super Admin: No"
+    }
+
     return utils.BasicReplyToUserWithMarkdown(bot, ctx, debugText)
 }

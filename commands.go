@@ -14,6 +14,7 @@ func InitCommands(dispatcher *ext.Dispatcher) {
     dispatcher.AddHandler(handlers.NewCommand("debuginfo", commands.DebugInfoCommand))
 
     dispatcher.AddHandler(handlers.NewCommand("addadmin", commands.AddAdminCommand))
+    dispatcher.AddHandler(handlers.NewCommand("deladmin", commands.DelAdminCommand))
 
     log.Println("Commands initialized")
 }

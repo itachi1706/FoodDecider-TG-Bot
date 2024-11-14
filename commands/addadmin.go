@@ -63,7 +63,7 @@ func AddAdminCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
             admin.UpdatedBy = userId
 
             db.Save(&admin)
-            message = "User " + nickname + " (" + userIdToAddStr + ") enabled as admin"
+            message = "User " + nickname + " (" + userIdToAddStr + ") reinstated as admin"
         }
     }
 
