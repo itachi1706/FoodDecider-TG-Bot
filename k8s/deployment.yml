@@ -1,0 +1,51 @@
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tg-bot-food-decider
+  labels:
+    app: tg-bot-food-decider
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tg-bot-food-decider
+  template:
+    metadata:
+      labels:
+        app: tg-bot-food-decider
+    spec:
+      containers:
+        - name: tg-bot-food-decider
+          image: itachi1706/personal-docker-images:tg-bot-food-decider
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: food-decider-tg-bot-secrets
+          resources:
+            requests:
+              memory: 10Mi
+              cpu: 10m
+            limits:
+              memory: 256Mi
+              cpu: 100m
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9999
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9999
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 9999
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      imagePullSecrets:
+        - name: dockerhub-creds
