@@ -12,6 +12,6 @@ type Admins struct {
     UpdatedAt    time.Time `gorm:"column:updated_at;default:CURRENT_TIMESTAMP"`
     CreatedBy    int64     `gorm:"column:created_by;NOT NULL"`
     UpdatedBy    int64     `gorm:"column:updated_by"`
-    IsSuperadmin int       `gorm:"column:is_superadmin;default:0"`
+    IsSuperadmin bool      `gorm:"column:is_superadmin;default:0"`
     Status       string    `gorm:"column:status;default:A"`
 }

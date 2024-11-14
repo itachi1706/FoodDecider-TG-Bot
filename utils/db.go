@@ -46,7 +46,7 @@ func CheckIfSuperAdmin(id int64) bool {
 
     // Check if exists in admin list and status is A
     var admin model.Admins
-    result := db.Where("telegram_id = ? AND status = ? AND is_superadmin = ?", id, "A", 1).First(&admin)
+    result := db.Where("telegram_id = ? AND status = ? AND is_superadmin = ?", id, "A", true).First(&admin)
     if result.Error != nil {
         return false
     }
