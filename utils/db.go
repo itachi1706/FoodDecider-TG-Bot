@@ -4,7 +4,6 @@ import (
     "FoodDecider-TG-Bot/model"
     "gorm.io/driver/mysql"
     "gorm.io/gorm"
-    "strconv"
 )
 
 func GetDbConnection() *gorm.DB {
@@ -23,9 +22,9 @@ func GetDbDSN() string {
     dbPass := GetEnvDefault("DB_PASS", "root")
     dbName := GetEnvDefault("DB_NAME", "food_decider")
     dbHost := GetEnvDefault("DB_HOST", "localhost")
-    dbPort := GetEnvDefaultInt("DB_PORT", 3306)
+    dbPort := GetEnvDefault("DB_PORT", "3306")
 
-    return dbUser + ":" + dbPass + "@tcp(" + dbHost + ":" + strconv.Itoa(dbPort) + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
+    return dbUser + ":" + dbPass + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
 }
 
 func CheckIfAdmin(id int64) bool {
