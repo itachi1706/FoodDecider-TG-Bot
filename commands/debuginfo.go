@@ -34,11 +34,11 @@ func DebugInfoCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
     debugText := "***Debug Information***\n"
     debugText += "Command Caller ID: " + strconv.FormatInt(sender.Id(), 10) + "\n"
-    debugText += "Command Caller: " + username + "\n"
+    debugText += "Command Caller: " + utils.EscapeMarkdown(username) + "\n"
     debugText += "Chat ID: " + strconv.FormatInt(chat.Id, 10) + "\n"
     debugText += "Chat Type: " + chatType + "\n"
     debugText += "Is Forum Mode: " + strconv.FormatBool(forum) + "\n"
-    debugText += "Chat Info: " + group
+    debugText += "Chat Info: " + utils.EscapeMarkdown(group)
 
     // Additional check if user is admin in app
     debugText += "\n\n***App Permissions***"

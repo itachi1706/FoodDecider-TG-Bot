@@ -23,8 +23,8 @@ func UserInfoCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
     debugText := "***User Information***\n"
     debugText += "Telegram ID: " + strconv.FormatInt(sender.Id(), 10) + "\n"
-    debugText += "Username: " + username + "\n"
-    debugText += "Name: " + senderName + "\n"
+    debugText += "Username: " + utils.EscapeMarkdown(username) + "\n"
+    debugText += "Name: " + utils.EscapeMarkdown(senderName) + "\n"
     debugText += "Is Bot: " + strconv.FormatBool(sender.IsBot()) + "\n"
 
     // Additional check if user is admin in app

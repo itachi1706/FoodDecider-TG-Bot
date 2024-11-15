@@ -26,7 +26,7 @@ func ListAdminsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     if len(admins) > 0 {
         message = "App Admins:\n"
         for idx, admin := range admins {
-            message += strconv.Itoa(idx+1) + ": " + admin.Name
+            message += strconv.Itoa(idx+1) + ": " + utils.EscapeMarkdown(admin.Name)
             if admin.IsSuperadmin {
                 message += " ***(SUPERADMIN)***"
             }
