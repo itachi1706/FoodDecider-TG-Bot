@@ -128,3 +128,13 @@ func (f FoodRepository) FindAllLocationsForFoodPaginated(foodId uuid.UUID, size 
 
     return locations
 }
+
+func (f FoodRepository) FindActiveLocationById(id uuid.UUID) *model.Locations {
+    var location model.Locations
+    result := f.db.Where(&model.Locations{ID: id, Status: "A"}).First(&location)
+    if result.Error != nil {
+        return nil
+    }
+
+    return &location
+}
