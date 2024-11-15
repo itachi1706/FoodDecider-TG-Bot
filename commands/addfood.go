@@ -44,8 +44,16 @@ func AddFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
         db.Create(&food)
         message = "Food " + foodName + " added to database.\n\nID: " + food.ID.String() + "\n\nUse the other commands to add more details to the food"
     } else {
-        // Food already exists
-        message = "Food " + foodName + " already exists. Modify food with /updatefood command"
+        // Check if status is A
+        if food.Status == "A" {
+            // Food already exists
+            message = "Food " + foodName + " already exists. Modify food with /updatefood command"
+        } else {
+            // Food exists but is inactive. Update it to active
+            food.Status = "A"
+            food.UpdatedBy = userId
+            db.Save(&food)
+        }
     }
 
     return utils.BasicReplyToUser(bot, ctx, message)
