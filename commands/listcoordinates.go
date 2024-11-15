@@ -56,6 +56,17 @@ func populateListFoodLocationsMessage(groups []model.Locations, food *model.Food
 	return message
 }
 
+func getCoordinatesData(foodId *uuid.UUID, pageCnt *int, bot *gotgbot.Bot, cb *gotgbot.CallbackQuery) error {
+	db := utils.GetDbConnection()
+	repo := repository.NewFoodsRepository(db)
+	foodLocations := repo.FindAllLocationsForFoodPaginated(*foodId, 5, *pageCnt)
+	food := repo.FindFoodById(*foodId)
+	message := populateListFoodLocationsMessage(foodLocations, food)
+	_, _, err := cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("coordinate-list+"+foodId.String()+"+", *pageCnt, true, true))
+
+	return err
+}
+
 func ListCoordinatesCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListCoordinates previous button clicked by " + ctx.EffectiveSender.Username())
 
@@ -68,14 +79,7 @@ func ListCoordinatesCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	// Get previous 5 food results with status A
-	db := utils.GetDbConnection()
-	repo := repository.NewFoodsRepository(db)
-	foodLocations := repo.FindAllLocationsForFoodPaginated(*foodId, 5, *pageCnt)
-	food := repo.FindFoodById(*foodId)
-	message := populateListFoodLocationsMessage(foodLocations, food)
-	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("coordinate-list+"+foodId.String()+"+", *pageCnt, true, true))
-
-	return nil
+	return getCoordinatesData(foodId, pageCnt, bot, cb)
 }
 
 func ListCoordinatesCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
@@ -90,12 +94,5 @@ func ListCoordinatesCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	// Get next 5 food results with status A
-	db := utils.GetDbConnection()
-	repo := repository.NewFoodsRepository(db)
-	foodLocations := repo.FindAllLocationsForFoodPaginated(*foodId, 5, *pageCnt)
-	food := repo.FindFoodById(*foodId)
-	message := populateListFoodLocationsMessage(foodLocations, food)
-	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("coordinate-list+"+foodId.String()+"+", *pageCnt, true, true))
-
-	return nil
+	return getCoordinatesData(foodId, pageCnt, bot, cb)
 }

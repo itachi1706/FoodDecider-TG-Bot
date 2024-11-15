@@ -52,6 +52,17 @@ func populateListFoodGroupsMessage(groups []model.FoodGroups, food *model.Food) 
 	return message
 }
 
+func getGroupData(foodId *uuid.UUID, pageCnt *int, bot *gotgbot.Bot, cb *gotgbot.CallbackQuery) error {
+	db := utils.GetDbConnection()
+	repo := repository.NewFoodsRepository(db)
+	foodGroups := repo.FindAllGroupsForFoodPaginated(*foodId, 5, *pageCnt)
+	food := repo.FindFoodById(*foodId)
+	message := populateListFoodGroupsMessage(foodGroups, food)
+	_, _, err := cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("group-list+"+foodId.String()+"+", *pageCnt, true, true))
+
+	return err
+}
+
 func ListGroupsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListGroups previous button clicked by " + ctx.EffectiveSender.Username())
 
@@ -64,14 +75,7 @@ func ListGroupsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	// Get previous 5 food results with status A
-	db := utils.GetDbConnection()
-	repo := repository.NewFoodsRepository(db)
-	foodGroups := repo.FindAllGroupsForFoodPaginated(*foodId, 5, *pageCnt)
-	food := repo.FindFoodById(*foodId)
-	message := populateListFoodGroupsMessage(foodGroups, food)
-	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("group-list+"+foodId.String()+"+", *pageCnt, true, true))
-
-	return nil
+	return getGroupData(foodId, pageCnt, bot, cb)
 }
 
 func ListGroupsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
@@ -86,12 +90,5 @@ func ListGroupsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	// Get next 5 food results with status A
-	db := utils.GetDbConnection()
-	repo := repository.NewFoodsRepository(db)
-	foodGroups := repo.FindAllGroupsForFoodPaginated(*foodId, 5, *pageCnt)
-	food := repo.FindFoodById(*foodId)
-	message := populateListFoodGroupsMessage(foodGroups, food)
-	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("group-list+"+foodId.String()+"+", *pageCnt, true, true))
-
-	return nil
+	return getGroupData(foodId, pageCnt, bot, cb)
 }
