@@ -4,6 +4,7 @@ import (
     "FoodDecider-TG-Bot/commands"
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
     "github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
+    "github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/callbackquery"
     "log"
 )
 
@@ -19,6 +20,9 @@ func InitCommands(dispatcher *ext.Dispatcher) {
     dispatcher.AddHandler(handlers.NewCommand("listadmins", commands.ListAdminsCommand))
 
     dispatcher.AddHandler(handlers.NewCommand("addfood", commands.AddFoodCommand))
+    dispatcher.AddHandler(handlers.NewCommand("listfoods", commands.ListFoodsCommand))
+    dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-food-list-"), commands.ListFoodsCommandPrev))
+    dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-food-list-"), commands.ListFoodsCommandNext))
 
     log.Println("Commands initialized")
 }

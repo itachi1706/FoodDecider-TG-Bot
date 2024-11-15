@@ -19,7 +19,6 @@ func AddFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
         return utils.BasicReplyToUser(bot, ctx, "This command can only be ran by an administrator")
     }
 
-    // Get user information to add to admin list from message
     messageOpts := utils.GetArgumentsFromMessage(ctx)
     log.Printf("Message options: %v\n", messageOpts)
     if len(messageOpts) < 1 {

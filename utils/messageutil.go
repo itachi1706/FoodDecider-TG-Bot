@@ -18,6 +18,10 @@ func BasicReplyToUserWithHTML(bot *gotgbot.Bot, ctx *ext.Context, message string
     return replyUser(bot, ctx, message, &gotgbot.SendMessageOpts{ParseMode: "HTML"})
 }
 
+func ReplyUserWithOpts(bot *gotgbot.Bot, ctx *ext.Context, message string, opts *gotgbot.SendMessageOpts) error {
+    return replyUser(bot, ctx, message, opts)
+}
+
 func replyUser(bot *gotgbot.Bot, ctx *ext.Context, message string, opt *gotgbot.SendMessageOpts) error {
     _, err := ctx.EffectiveMessage.Reply(bot, message, opt)
     if err != nil {
