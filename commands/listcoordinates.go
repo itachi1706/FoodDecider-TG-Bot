@@ -62,7 +62,7 @@ func ListCoordinatesCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	cb := ctx.Update.CallbackQuery
 	log.Println("Callback data: " + cb.Data)
 
-	err, foodId, pageCnt := services.HandleFoodNextCommands(bot, cb)
+	err, foodId, pageCnt := services.HandleFoodPrevCommands(bot, cb)
 	if err != nil || foodId == nil || pageCnt == nil {
 		return err // End here
 	}
