@@ -53,6 +53,7 @@ func AddFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
             food.Status = "A"
             food.UpdatedBy = userId
             db.Save(&food)
+            message = "Food " + foodName + " added to database.\n\nID: " + food.ID.String() + "\n\nUse the other commands to add more details to the food"
         }
     }
 
