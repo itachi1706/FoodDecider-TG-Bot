@@ -2,9 +2,12 @@ package main
 
 import (
     "FoodDecider-TG-Bot/commands"
+    "github.com/PaulSonOfLars/gotgbot/v2"
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
     "github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
+    "github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/conversation"
     "github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/callbackquery"
+    "github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/message"
     "log"
 )
 
@@ -27,6 +30,20 @@ func InitCommands(dispatcher *ext.Dispatcher) {
     dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-food-list-"), commands.ListFoodsCommandNext))
 
     dispatcher.AddHandler(handlers.NewCommand("addgroup", commands.AddGroupCommand))
+    dispatcher.AddHandler(handlers.NewConversation(
+        []ext.Handler{handlers.NewCommand("renamegroup", commands.RenameGroupCommand)},
+        map[string][]ext.Handler{
+            commands.NewGroupName: {handlers.NewMessage(noCommands, commands.RenameGroupCommandNewName)},
+        },
+        &handlers.ConversationOpts{
+            Exits:        []ext.Handler{handlers.NewCommand("cancel", commands.CancelCommand)},
+            StateStorage: conversation.NewInMemoryStorage(conversation.KeyStrategySenderAndChat),
+            AllowReEntry: true,
+        }))
 
     log.Println("Commands initialized")
+}
+
+func noCommands(msg *gotgbot.Message) bool {
+    return message.Text(msg) && !message.Command(msg)
 }
