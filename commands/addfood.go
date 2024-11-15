@@ -22,7 +22,7 @@ func AddFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     messageOpts := utils.GetArgumentsFromMessage(ctx)
     log.Printf("Message options: %v\n", messageOpts)
     if len(messageOpts) < 1 {
-        return utils.BasicReplyToUser(bot, ctx, "Please provide a food name and a optional description\n\nFormat: /addfood <name>")
+        return utils.BasicReplyToUser(bot, ctx, "Please provide a food name\n\nFormat: /addfood <name>")
     }
 
     foodName := strings.Trim(strings.Join(messageOpts[0:], " "), " ")
