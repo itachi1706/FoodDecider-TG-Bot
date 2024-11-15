@@ -6,7 +6,7 @@ import (
 )
 
 type Locations struct {
-    ID        int       `gorm:"column:id;AUTO_INCREMENT;primary_key"`
+    ID        uuid.UUID `gorm:"column:id;primary_key"`
     FoodID    uuid.UUID `gorm:"column:food_id;NOT NULL"`
     Name      string    `gorm:"column:name;NOT NULL"`
     Latitude  float64   `gorm:"column:latitude;NOT NULL"`

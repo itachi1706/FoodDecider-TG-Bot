@@ -60,7 +60,7 @@ CREATE TABLE food_groups_link
 
 CREATE TABLE locations
 (
-    id          int AUTO_INCREMENT PRIMARY KEY,
+    id          VARCHAR(36) PRIMARY KEY,
     food_id     VARCHAR(36) NOT NULL,
     name        VARCHAR(255) NOT NULL,
     latitude    DECIMAL(10, 8) NOT NULL,
