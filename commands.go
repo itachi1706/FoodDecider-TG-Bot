@@ -45,6 +45,8 @@ func InitCommands(dispatcher *ext.Dispatcher) {
     dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-group-list"), commands.ListGroupsCommandPrev))
     dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-group-list"), commands.ListGroupsCommandNext))
 
+    dispatcher.AddHandler(handlers.NewCommand("addcoordinate", commands.AddCoordinateCommand))
+
     log.Println("Commands initialized")
 }
 

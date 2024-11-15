@@ -111,3 +111,13 @@ func (f FoodRepository) GetActiveFoodGroupLink(foodId uuid.UUID, groupId int) *m
 
     return &foodGroupLink
 }
+
+func (f FoodRepository) GetFoodLocation(foodId uuid.UUID, lat float64, lng float64) *model.Locations {
+    var location model.Locations
+    result := f.db.Where(&model.Locations{FoodID: foodId, Latitude: lat, Longitude: lng}).First(&location)
+    if result.Error != nil {
+        return nil
+    }
+
+    return &location
+}
