@@ -121,3 +121,10 @@ func (f FoodRepository) GetFoodLocation(foodId uuid.UUID, lat float64, lng float
 
     return &location
 }
+
+func (f FoodRepository) FindAllLocationsForFoodPaginated(foodId uuid.UUID, size int, offset int) []model.Locations {
+    var locations []model.Locations
+    f.db.Where(&model.Locations{FoodID: foodId, Status: "A"}).Limit(size).Offset(offset * size).Find(&locations)
+
+    return locations
+}
