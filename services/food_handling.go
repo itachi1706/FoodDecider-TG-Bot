@@ -5,7 +5,9 @@ import (
 	"FoodDecider-TG-Bot/utils"
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/google/uuid"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -113,4 +115,27 @@ func HandleFoodNextCommands(bot *gotgbot.Bot, cb *gotgbot.CallbackQuery) (error,
 	}
 
 	return nil, &foodId, &pageCnt
+}
+
+func GroupHandlingParameter(bot *gotgbot.Bot, ctx *ext.Context, format string) (*int64, *uuid.UUID, *string, error) {
+	userId := ctx.EffectiveSender.Id()
+	// Make sure guy is an admin to run
+	if utils.CheckIfAdmin(userId) == false {
+		return nil, nil, nil, utils.BasicReplyToUser(bot, ctx, "This command can only be ran by an administrator")
+	}
+
+	messageOpts := utils.GetArgumentsFromMessage(ctx)
+	log.Printf("Message options: %v\n", messageOpts)
+	if len(messageOpts) < 2 {
+		return nil, nil, nil, utils.BasicReplyToUser(bot, ctx, "Invalid Format\n\nFormat: "+format)
+	}
+
+	foodId, err := uuid.Parse(messageOpts[0])
+	if err != nil {
+		return nil, nil, nil, utils.BasicReplyToUser(bot, ctx, "Invalid food id provided")
+	}
+
+	groupName := strings.Trim(strings.Join(messageOpts[1:], " "), " ")
+
+	return &userId, &foodId, &groupName, nil
 }
