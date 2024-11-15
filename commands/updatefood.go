@@ -7,10 +7,11 @@ import (
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
     "github.com/google/uuid"
     "log"
+    "strings"
 )
 
-func DelFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
-    log.Println("DelFood command called by " + ctx.EffectiveSender.Username())
+func UpdateFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
+    log.Println("UpdateFood command called by " + ctx.EffectiveSender.Username())
 
     userId := ctx.EffectiveSender.Id()
     // Make sure guy is an admin to run
@@ -20,14 +21,22 @@ func DelFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
     messageOpts := utils.GetArgumentsFromMessage(ctx)
     log.Printf("Message options: %v\n", messageOpts)
-    if len(messageOpts) < 1 {
-        return utils.BasicReplyToUser(bot, ctx, "Please provide a food id to delete\n\nFormat: /delfood <id>")
+    if len(messageOpts) < 3 {
+        return utils.BasicReplyToUser(bot, ctx, "Invalid update food format\n\nFormat: /updatefood <id> <name/description> [value]")
     }
 
     foodId, err := uuid.Parse(messageOpts[0])
     if err != nil {
         return utils.BasicReplyToUser(bot, ctx, "Invalid food id provided")
     }
+
+    updateType := strings.ToLower(messageOpts[1])
+    log.Printf("Update type: '%s'\n", updateType)
+    if updateType != "name" && updateType != "description" {
+        return utils.BasicReplyToUser(bot, ctx, "Invalid update type provided. Valid types: name, description")
+    }
+
+    updateValue := strings.Trim(strings.Join(messageOpts[2:], " "), " ")
 
     db := utils.GetDbConnection()
     var food model.Food
@@ -38,10 +47,15 @@ func DelFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
         // New Food
         message = "Food with ID " + foodId.String() + " does not exist"
     } else {
-        food.Status = "D"
+        if updateType == "name" {
+            food.Name = updateValue
+        } else {
+            food.Description = updateValue
+        }
+
         food.UpdatedBy = userId
         db.Save(&food)
-        message = "Food " + food.Name + " deleted from database"
+        message = "Food " + food.Name + " updated in database"
     }
 
     return utils.BasicReplyToUser(bot, ctx, message)
