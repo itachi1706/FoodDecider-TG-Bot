@@ -2,6 +2,7 @@ package commands
 
 import (
     "FoodDecider-TG-Bot/model"
+    "FoodDecider-TG-Bot/repository"
     "FoodDecider-TG-Bot/utils"
     "github.com/PaulSonOfLars/gotgbot/v2"
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -37,19 +38,18 @@ func AddAdminCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     }
 
     db := utils.GetDbConnection()
-    var admin model.Admins
-    result := db.Where("telegram_id = ?", userIdToAdd).First(&admin)
+    admin := repository.FindAdmin(db, userIdToAdd)
     message := "An error has occurred. Please try again later"
-    if result.Error != nil {
+    if admin == nil {
         // New user
         log.Println("Adding new user " + userIdToAddStr + " to admin list")
-        admin = model.Admins{
+        admin = &model.Admins{
             TelegramID: userIdToAdd,
             Name:       nickname,
             CreatedBy:  userId,
             UpdatedBy:  userId,
         }
-        db.Create(&admin)
+        db.Create(admin)
         message = "User " + nickname + " (" + userIdToAddStr + ") added as admin"
     } else {
         // User already exists

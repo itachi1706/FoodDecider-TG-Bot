@@ -32,3 +32,10 @@ func FindAllActiveFoodPaginated(db *gorm.DB, size int, offset int) []model.Food 
 
     return foods
 }
+
+func GetFoodCount(db *gorm.DB) int64 {
+    var count int64
+    db.Model(&model.Food{}).Where("status = ?", "A").Count(&count)
+
+    return count
+}

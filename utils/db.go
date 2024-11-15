@@ -1,7 +1,7 @@
 package utils
 
 import (
-    "FoodDecider-TG-Bot/model"
+    "FoodDecider-TG-Bot/repository"
     "fmt"
     "gorm.io/driver/mysql"
     "gorm.io/gorm"
@@ -30,11 +30,9 @@ func GetDbDSN() string {
 
 func CheckIfAdmin(id int64) bool {
     db := GetDbConnection()
-
-    // Check if exists in admin list and status is A
-    var admin model.Admins
-    result := db.Where("telegram_id = ? AND status = ?", id, "A").First(&admin)
-    if result.Error != nil {
+    
+    admin := repository.FindActiveAdmin(db, id)
+    if admin == nil {
         return false
     }
 
@@ -44,10 +42,8 @@ func CheckIfAdmin(id int64) bool {
 func CheckIfSuperAdmin(id int64) bool {
     db := GetDbConnection()
 
-    // Check if exists in admin list and status is A
-    var admin model.Admins
-    result := db.Where("telegram_id = ? AND status = ? AND is_superadmin = ?", id, "A", true).First(&admin)
-    if result.Error != nil {
+    admin := repository.FindActiveSuperAdmin(db, id)
+    if admin == nil {
         return false
     }
 

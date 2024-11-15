@@ -1,7 +1,7 @@
 package commands
 
 import (
-    "FoodDecider-TG-Bot/model"
+    "FoodDecider-TG-Bot/repository"
     "FoodDecider-TG-Bot/utils"
     "github.com/PaulSonOfLars/gotgbot/v2"
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -19,8 +19,7 @@ func ListAdminsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     }
 
     db := utils.GetDbConnection()
-    var admins []model.Admins
-    db.Where("status = ?", "A").Find(&admins)
+    admins := repository.FindAllActiveAdmins(db)
 
     message := "No admins found"
     if len(admins) > 0 {

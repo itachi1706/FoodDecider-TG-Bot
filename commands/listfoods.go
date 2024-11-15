@@ -98,8 +98,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 
     db := utils.GetDbConnection()
     // Get total number of food and find number of possible pages (including partial)
-    var count int64
-    db.Model(&model.Food{}).Where("status = ?", "A").Count(&count)
+    count := repository.GetFoodCount(db)
     totalPages := count / 5
     modulo := count % 5
     if modulo > 0 {
