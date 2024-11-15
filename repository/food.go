@@ -101,3 +101,13 @@ func (f FoodRepository) GetFoodGroupForFoodCount(foodId uuid.UUID) int64 {
 
     return count
 }
+
+func (f FoodRepository) GetActiveFoodGroupLink(foodId uuid.UUID, groupId int) *model.FoodGroupsLink {
+    var foodGroupLink model.FoodGroupsLink
+    result := f.db.Where(&model.FoodGroupsLink{FoodID: foodId, GroupID: groupId, Status: "A"}).First(&foodGroupLink)
+    if result.Error != nil {
+        return nil
+    }
+
+    return &foodGroupLink
+}

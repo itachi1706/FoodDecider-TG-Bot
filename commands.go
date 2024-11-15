@@ -30,6 +30,7 @@ func InitCommands(dispatcher *ext.Dispatcher) {
     dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-food-list-"), commands.ListFoodsCommandNext))
 
     dispatcher.AddHandler(handlers.NewCommand("addgroup", commands.AddGroupCommand))
+    dispatcher.AddHandler(handlers.NewCommand("removegroup", commands.RemoveGroupCommand))
     dispatcher.AddHandler(handlers.NewConversation(
         []ext.Handler{handlers.NewCommand("renamegroup", commands.RenameGroupCommand)},
         map[string][]ext.Handler{
