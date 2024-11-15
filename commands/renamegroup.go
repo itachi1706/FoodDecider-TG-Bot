@@ -45,7 +45,7 @@ func RenameGroupCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     } else {
         // Enter conversation to get new group name
         advance = true
-        message = "Please enter new group name. Run /cancel to cancel this operation"
+        message = "Please reply to this message with the new group name. Run /cancel to cancel this operation"
     }
 
     id, _ := conversation.KeyStrategySenderAndChat(ctx)
