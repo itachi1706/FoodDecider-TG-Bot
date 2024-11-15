@@ -37,3 +37,35 @@ func GetArgumentsFromMessage(ctx *ext.Context) []string {
     // Remove the command from the list
     return messageList[1:]
 }
+
+func GeneratePageKeys(cmdType string, currentPage int, showPrev bool, showNext bool) gotgbot.InlineKeyboardMarkup {
+    var keys [][]gotgbot.InlineKeyboardButton
+    var row []gotgbot.InlineKeyboardButton
+    if showPrev {
+        row = append(row, gotgbot.InlineKeyboardButton{
+            Text:         "⬅️",
+            CallbackData: fmt.Sprintf("previous-%s-%d", cmdType, currentPage),
+        },
+        )
+    }
+    if showNext {
+        row = append(row, gotgbot.InlineKeyboardButton{
+            Text:         "➡️",
+            CallbackData: fmt.Sprintf("next-%s-%d", cmdType, currentPage),
+        },
+        )
+    }
+    keys = append(keys, row)
+
+    return gotgbot.InlineKeyboardMarkup{
+        InlineKeyboard: keys,
+    }
+}
+
+func GeneratePageKeysSend(cmdType string, currentPage int, showPrev bool, showNext bool) *gotgbot.SendMessageOpts {
+    return &gotgbot.SendMessageOpts{ReplyMarkup: GeneratePageKeys(cmdType, currentPage, showPrev, showNext)}
+}
+
+func GeneratePageKeysEdit(cmdType string, currentPage int, showPrev bool, showNext bool) *gotgbot.EditMessageTextOpts {
+    return &gotgbot.EditMessageTextOpts{ReplyMarkup: GeneratePageKeys(cmdType, currentPage, showPrev, showNext)}
+}

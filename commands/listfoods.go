@@ -21,22 +21,7 @@ func ListFoodsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
     message := populateMessage(foods)
 
-    return utils.ReplyUserWithOpts(bot, ctx, message, &gotgbot.SendMessageOpts{
-        ReplyMarkup: gotgbot.InlineKeyboardMarkup{
-            InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
-                {
-                    gotgbot.InlineKeyboardButton{
-                        Text:         "⬅️",
-                        CallbackData: "previous-food-list-0",
-                    },
-                    gotgbot.InlineKeyboardButton{
-                        Text:         "➡️",
-                        CallbackData: "next-food-list-0",
-                    },
-                },
-            },
-        },
-    })
+    return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend("food-list", 0, true, true))
 }
 
 func populateMessage(foods []model.Food) string {
@@ -96,22 +81,7 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
     db.Where("status = ?", "A").Limit(5).Offset(pageCnt * 5).Find(&foods)
 
     message := populateMessage(foods)
-    _, _, err = cb.Message.EditText(bot, message, &gotgbot.EditMessageTextOpts{
-        ReplyMarkup: gotgbot.InlineKeyboardMarkup{
-            InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
-                {
-                    gotgbot.InlineKeyboardButton{
-                        Text:         "⬅️",
-                        CallbackData: fmt.Sprintf("previous-food-list-%d", pageCnt),
-                    },
-                    gotgbot.InlineKeyboardButton{
-                        Text:         "➡️",
-                        CallbackData: fmt.Sprintf("next-food-list-%d", pageCnt),
-                    },
-                },
-            },
-        },
-    })
+    _, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))
 
     return nil
 }
@@ -169,22 +139,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
     db.Where("status = ?", "A").Limit(5).Offset(pageCnt * 5).Find(&foods)
 
     message := populateMessage(foods)
-    _, _, err = cb.Message.EditText(bot, message, &gotgbot.EditMessageTextOpts{
-        ReplyMarkup: gotgbot.InlineKeyboardMarkup{
-            InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
-                {
-                    gotgbot.InlineKeyboardButton{
-                        Text:         "⬅️",
-                        CallbackData: fmt.Sprintf("previous-food-list-%d", pageCnt),
-                    },
-                    gotgbot.InlineKeyboardButton{
-                        Text:         "➡️",
-                        CallbackData: fmt.Sprintf("next-food-list-%d", pageCnt),
-                    },
-                },
-            },
-        },
-    })
+    _, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))
 
     return nil
 }
