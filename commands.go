@@ -26,5 +26,7 @@ func InitCommands(dispatcher *ext.Dispatcher) {
     dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-food-list-"), commands.ListFoodsCommandPrev))
     dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-food-list-"), commands.ListFoodsCommandNext))
 
+    dispatcher.AddHandler(handlers.NewCommand("addgroup", commands.AddGroupCommand))
+
     log.Println("Commands initialized")
 }

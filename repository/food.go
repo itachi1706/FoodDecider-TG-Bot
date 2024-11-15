@@ -47,3 +47,24 @@ func (f FoodRepository) GetFoodCount() int64 {
 
     return count
 }
+
+func (f FoodRepository) GetFoodGroup(name string) *model.FoodGroups {
+    var foodGroup model.FoodGroups
+    result := f.db.Where("name = ?", name).First(&foodGroup)
+    if result.Error != nil {
+        return nil
+    }
+
+    return &foodGroup
+}
+
+func (f FoodRepository) GetFoodGroupLink(foodId uuid.UUID, groupId int) *model.FoodGroupsLink {
+    var foodGroupLink model.FoodGroupsLink
+    result := f.db.Where("food_id = ? AND group_id = ?", foodId, groupId).First(&foodGroupLink)
+    if result.Error != nil {
+        return nil
+    }
+
+    return &foodGroupLink
+
+}
