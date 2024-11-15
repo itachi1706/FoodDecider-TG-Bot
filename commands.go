@@ -50,10 +50,24 @@ func InitCommands(dispatcher *ext.Dispatcher) {
     dispatcher.AddHandler(handlers.NewCommand("listcoordinates", commands.ListCoordinatesCommand))
     dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-coordinate-list"), commands.ListCoordinatesCommandPrev))
     dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-coordinate-list"), commands.ListCoordinatesCommandNext))
+    dispatcher.AddHandler(handlers.NewConversation(
+        []ext.Handler{handlers.NewCommand("addlocation", commands.AddLocationCommand)},
+        map[string][]ext.Handler{
+            commands.AddFoodLocation: {handlers.NewMessage(locationPin, commands.AddLocationCommandLocationPin)},
+        },
+        &handlers.ConversationOpts{
+            Exits:        []ext.Handler{handlers.NewCommand("cancel", commands.CancelCommand)},
+            StateStorage: conversation.NewInMemoryStorage(conversation.KeyStrategySenderAndChat),
+            AllowReEntry: true,
+        }))
 
     log.Println("Commands initialized")
 }
 
 func noCommands(msg *gotgbot.Message) bool {
     return message.Text(msg) && !message.Command(msg)
+}
+
+func locationPin(msg *gotgbot.Message) bool {
+    return message.Location(msg)
 }
