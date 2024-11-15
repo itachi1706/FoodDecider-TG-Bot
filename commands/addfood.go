@@ -2,6 +2,7 @@ package commands
 
 import (
     "FoodDecider-TG-Bot/model"
+    "FoodDecider-TG-Bot/repository"
     "FoodDecider-TG-Bot/utils"
     "github.com/PaulSonOfLars/gotgbot/v2"
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -28,11 +29,10 @@ func AddFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     foodName := strings.Trim(strings.Join(messageOpts[0:], " "), " ")
 
     db := utils.GetDbConnection()
-    var food model.Food
     // Check if food name already exists
-    result := db.Where("name = ?", foodName).First(&food)
+    food := repository.FindFoodByNameAll(db, foodName)
     message := "An error has occurred. Please try again later"
-    if result.Error != nil {
+    if food == nil {
         // New Food
         log.Println("Adding new food " + foodName)
         food = model.Food{

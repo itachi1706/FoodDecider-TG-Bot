@@ -2,6 +2,7 @@ package commands
 
 import (
     "FoodDecider-TG-Bot/model"
+    "FoodDecider-TG-Bot/repository"
     "FoodDecider-TG-Bot/utils"
     "fmt"
     "github.com/PaulSonOfLars/gotgbot/v2"
@@ -16,9 +17,7 @@ func ListFoodsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
     db := utils.GetDbConnection()
     // Get first 5 food results with status A
-    var foods []model.Food
-    db.Where("status = ?", "A").Limit(5).Offset(0).Find(&foods)
-
+    foods := repository.FindAllActiveFoodPaginated(db, 5, 0)
     message := populateMessage(foods)
 
     return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend("food-list", 0, true, true))
@@ -77,8 +76,7 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 
     // Get previous 5 food results with status A
     db := utils.GetDbConnection()
-    var foods []model.Food
-    db.Where("status = ?", "A").Limit(5).Offset(pageCnt * 5).Find(&foods)
+    foods := repository.FindAllActiveFoodPaginated(db, 5, pageCnt)
 
     message := populateMessage(foods)
     _, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))
@@ -135,8 +133,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
     }
 
     // Get next 5 food results with status A
-    var foods []model.Food
-    db.Where("status = ?", "A").Limit(5).Offset(pageCnt * 5).Find(&foods)
+    foods := repository.FindAllActiveFoodPaginated(db, 5, pageCnt)
 
     message := populateMessage(foods)
     _, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))

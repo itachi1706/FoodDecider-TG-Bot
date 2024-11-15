@@ -1,7 +1,7 @@
 package commands
 
 import (
-    "FoodDecider-TG-Bot/model"
+    "FoodDecider-TG-Bot/repository"
     "FoodDecider-TG-Bot/utils"
     "github.com/PaulSonOfLars/gotgbot/v2"
     "github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -30,11 +30,10 @@ func DelFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     }
 
     db := utils.GetDbConnection()
-    var food model.Food
     // Check if food name already exists
-    result := db.Where("id = ? AND status = ?", foodId, "A").First(&food)
+    food := repository.FindFoodById(db, foodId)
     message := "An error has occurred. Please try again later"
-    if result.Error != nil {
+    if food == nil {
         // New Food
         message = "Food with ID " + foodId.String() + " does not exist"
     } else {
