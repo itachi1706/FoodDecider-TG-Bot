@@ -15,14 +15,14 @@ func NewAdminsRepository(db *gorm.DB) AdminsRepository {
 
 func (a AdminsRepository) FindAllActiveAdmins() []model.Admins {
     var admins []model.Admins
-    a.db.Where("status = ?", "A").Find(&admins)
+    a.db.Where(&model.Admins{Status: "A"}).Find(&admins)
 
     return admins
 }
 
 func (a AdminsRepository) FindActiveAdmin(id int64) *model.Admins {
     var admin model.Admins
-    result := a.db.Where("telegram_id = ? AND status = ?", id, "A").First(&admin)
+    result := a.db.Where(&model.Admins{TelegramID: id, Status: "A"}).First(&admin)
     if result.Error != nil {
         return nil
     }
@@ -32,7 +32,7 @@ func (a AdminsRepository) FindActiveAdmin(id int64) *model.Admins {
 
 func (a AdminsRepository) FindActiveSuperAdmin(id int64) *model.Admins {
     var admin model.Admins
-    result := a.db.Where("telegram_id = ? AND status = ? AND is_superadmin = ?", id, "A", true).First(&admin)
+    result := a.db.Where(&model.Admins{TelegramID: id, Status: "A", IsSuperadmin: true}).First(&admin)
     if result.Error != nil {
         return nil
     }
@@ -42,7 +42,7 @@ func (a AdminsRepository) FindActiveSuperAdmin(id int64) *model.Admins {
 
 func (a AdminsRepository) FindAdmin(id int64) *model.Admins {
     var admin model.Admins
-    result := a.db.Where("telegram_id = ?", id).First(&admin)
+    result := a.db.Where(&model.Admins{TelegramID: id}).First(&admin)
     if result.Error != nil {
         return nil
     }

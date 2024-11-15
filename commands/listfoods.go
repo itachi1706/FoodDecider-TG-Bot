@@ -19,12 +19,12 @@ func ListFoodsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     repo := repository.NewFoodsRepository(db)
     // Get first 5 food results with status A
     foods := repo.FindAllActiveFoodPaginated(5, 0)
-    message := populateMessage(foods)
+    message := populateListFoodMessage(foods)
 
     return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend("food-list", 0, true, true))
 }
 
-func populateMessage(foods []model.Food) string {
+func populateListFoodMessage(foods []model.Food) string {
     message := "No foods found"
     if len(foods) > 0 {
         message = "List of foods:\n\n"
@@ -80,7 +80,7 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
     repo := repository.NewFoodsRepository(db)
     foods := repo.FindAllActiveFoodPaginated(5, pageCnt)
 
-    message := populateMessage(foods)
+    message := populateListFoodMessage(foods)
     _, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))
 
     return nil
@@ -137,7 +137,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
     // Get next 5 food results with status A
     foods := repo.FindAllActiveFoodPaginated(5, pageCnt)
 
-    message := populateMessage(foods)
+    message := populateListFoodMessage(foods)
     _, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))
 
     return nil

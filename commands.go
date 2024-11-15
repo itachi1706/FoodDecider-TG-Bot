@@ -40,6 +40,9 @@ func InitCommands(dispatcher *ext.Dispatcher) {
             StateStorage: conversation.NewInMemoryStorage(conversation.KeyStrategySenderAndChat),
             AllowReEntry: true,
         }))
+    dispatcher.AddHandler(handlers.NewCommand("listgroups", commands.ListGroupsCommand))
+    dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-group-list"), commands.ListGroupsCommandPrev))
+    dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-group-list"), commands.ListGroupsCommandNext))
 
     log.Println("Commands initialized")
 }
