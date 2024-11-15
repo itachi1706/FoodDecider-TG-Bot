@@ -30,8 +30,9 @@ func DelFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     }
 
     db := utils.GetDbConnection()
+    repo := repository.NewFoodsRepository(db)
     // Check if food name already exists
-    food := repository.FindFoodById(db, foodId)
+    food := repo.FindFoodById(foodId)
     message := "An error has occurred. Please try again later"
     if food == nil {
         // New Food

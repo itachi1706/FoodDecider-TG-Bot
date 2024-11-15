@@ -39,7 +39,8 @@ func DelAdminCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     }
 
     db := utils.GetDbConnection()
-    admin := repository.FindActiveAdmin(db, userIdToDel)
+    repo := repository.NewAdminsRepository(db)
+    admin := repo.FindActiveAdmin(userIdToDel)
     message := "An error has occurred. Please try again later"
     if admin == nil {
         message = "User ID " + userIdToDelStr + " is not an administrator"

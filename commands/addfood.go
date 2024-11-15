@@ -29,13 +29,14 @@ func AddFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     foodName := strings.Trim(strings.Join(messageOpts[0:], " "), " ")
 
     db := utils.GetDbConnection()
+    repo := repository.NewFoodsRepository(db)
     // Check if food name already exists
-    food := repository.FindFoodByNameAll(db, foodName)
+    food := repo.FindFoodByNameAll(foodName)
     message := "An error has occurred. Please try again later"
     if food == nil {
         // New Food
         log.Println("Adding new food " + foodName)
-        food = model.Food{
+        food = &model.Food{
             ID:        uuid.New(),
             Name:      foodName,
             CreatedBy: userId,

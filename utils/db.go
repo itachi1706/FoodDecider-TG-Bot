@@ -30,8 +30,9 @@ func GetDbDSN() string {
 
 func CheckIfAdmin(id int64) bool {
     db := GetDbConnection()
-    
-    admin := repository.FindActiveAdmin(db, id)
+
+    repo := repository.NewAdminsRepository(db)
+    admin := repo.FindActiveAdmin(id)
     if admin == nil {
         return false
     }
@@ -42,7 +43,8 @@ func CheckIfAdmin(id int64) bool {
 func CheckIfSuperAdmin(id int64) bool {
     db := GetDbConnection()
 
-    admin := repository.FindActiveSuperAdmin(db, id)
+    repo := repository.NewAdminsRepository(db)
+    admin := repo.FindActiveSuperAdmin(id)
     if admin == nil {
         return false
     }

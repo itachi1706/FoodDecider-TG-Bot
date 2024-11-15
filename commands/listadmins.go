@@ -19,7 +19,8 @@ func ListAdminsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     }
 
     db := utils.GetDbConnection()
-    admins := repository.FindAllActiveAdmins(db)
+    repo := repository.NewAdminsRepository(db)
+    admins := repo.FindAllActiveAdmins()
 
     message := "No admins found"
     if len(admins) > 0 {

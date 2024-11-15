@@ -16,8 +16,9 @@ func ListFoodsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
     log.Println("ListFoods command called by " + ctx.EffectiveSender.Username())
 
     db := utils.GetDbConnection()
+    repo := repository.NewFoodsRepository(db)
     // Get first 5 food results with status A
-    foods := repository.FindAllActiveFoodPaginated(db, 5, 0)
+    foods := repo.FindAllActiveFoodPaginated(5, 0)
     message := populateMessage(foods)
 
     return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend("food-list", 0, true, true))
@@ -76,7 +77,8 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 
     // Get previous 5 food results with status A
     db := utils.GetDbConnection()
-    foods := repository.FindAllActiveFoodPaginated(db, 5, pageCnt)
+    repo := repository.NewFoodsRepository(db)
+    foods := repo.FindAllActiveFoodPaginated(5, pageCnt)
 
     message := populateMessage(foods)
     _, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))
@@ -97,8 +99,9 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
     }
 
     db := utils.GetDbConnection()
+    repo := repository.NewFoodsRepository(db)
     // Get total number of food and find number of possible pages (including partial)
-    count := repository.GetFoodCount(db)
+    count := repo.GetFoodCount()
     totalPages := count / 5
     modulo := count % 5
     if modulo > 0 {
@@ -132,7 +135,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
     }
 
     // Get next 5 food results with status A
-    foods := repository.FindAllActiveFoodPaginated(db, 5, pageCnt)
+    foods := repo.FindAllActiveFoodPaginated(5, pageCnt)
 
     message := populateMessage(foods)
     _, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))
