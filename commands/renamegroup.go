@@ -1,9 +1,11 @@
 package commands
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/services"
 	"FoodDecider-TG-Bot/utils"
+	"fmt"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
@@ -37,7 +39,7 @@ func RenameGroupCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	repo := repository.NewFoodsRepository(db)
 	// Check if foodGroup name already exists
 	foodGroup := repo.GetActiveFoodGroup(groupName)
-	message := "An error has occurred. Please try again later"
+	message := constants.ErrorMessage
 	advance := false
 	if foodGroup == nil {
 		// New Food
@@ -53,7 +55,7 @@ func RenameGroupCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	if !advance {
 		return err
 	} else {
-		services.SetString("groupId-"+id, foodGroup.ID)
+		services.SetString(fmt.Sprint("groupId-%s", id), foodGroup.ID)
 		return handlers.NextConversationState(NewGroupName)
 	}
 }
@@ -71,12 +73,14 @@ func RenameGroupCommandNewName(bot *gotgbot.Bot, ctx *ext.Context) error {
 	newGroupName := ctx.EffectiveMessage.Text
 	cid, _ := conversation.KeyStrategySenderAndChat(ctx)
 
-	idIf, get := services.GetString("groupId-" + cid)
+	idKey := fmt.Sprint("groupId-%s", cid)
+
+	idIf, get := services.GetString(idKey)
 	if !get {
-		_ = utils.BasicReplyToUser(bot, ctx, "An error has occurred. Please try again later")
+		_ = utils.BasicReplyToUser(bot, ctx, constants.ErrorMessage)
 		return handlers.EndConversation()
 	}
-	services.DeleteString("groupId-" + cid)
+	services.DeleteString(idKey)
 	id := idIf.(int)
 
 	log.Println("New group name: " + newGroupName)
@@ -86,7 +90,7 @@ func RenameGroupCommandNewName(bot *gotgbot.Bot, ctx *ext.Context) error {
 	repo := repository.NewFoodsRepository(db)
 	// Check if foodGroup name already exists
 	foodGroup := repo.GetActiveFoodGroupById(id)
-	message := "An error has occurred. Please try again later"
+	message := constants.ErrorMessage
 	if foodGroup == nil {
 		// New Food
 		message = "Group does not exist"

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/utils"
 	"fmt"
@@ -38,12 +39,12 @@ func HandleFoodPrevCommands(bot *gotgbot.Bot, cb *gotgbot.CallbackQuery) (error,
 	foodId, pageCnt, err := ParseFoodParameters(cb.Data)
 	if err != nil {
 		_, _ = cb.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
-			Text: "An error occurred. Please try again later",
+			Text: constants.ErrorMessage,
 		})
 		return fmt.Errorf("failed to parse data: %w", err), nil, nil
 	}
 
-	answerMsg := "An error occurred. Please try again later"
+	answerMsg := constants.ErrorMessage
 	cont := true
 	if pageCnt <= 0 {
 		// First page
@@ -73,7 +74,7 @@ func HandleFoodNextCommands(bot *gotgbot.Bot, cb *gotgbot.CallbackQuery) (error,
 	foodId, pageCnt, err := ParseFoodParameters(cb.Data)
 	if err != nil {
 		_, _ = cb.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
-			Text: "An error occurred. Please try again later",
+			Text: constants.ErrorMessage,
 		})
 		return fmt.Errorf("failed to parse data: %w", err), nil, nil
 	}
@@ -91,7 +92,7 @@ func HandleFoodNextCommands(bot *gotgbot.Bot, cb *gotgbot.CallbackQuery) (error,
 	// pagecnt to int64
 	pageCnt64 := int64(pageCnt)
 
-	answerMsg := "An error occurred. Please try again later"
+	answerMsg := constants.ErrorMessage
 	cont := true
 	if pageCnt64 >= totalPages-1 {
 		// last page

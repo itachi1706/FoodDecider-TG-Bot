@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/model"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/utils"
@@ -40,7 +41,7 @@ func AddAdminCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	db := utils.GetDbConnection()
 	repo := repository.NewAdminsRepository(db)
 	admin := repo.FindAdmin(userIdToAdd)
-	message := "An error has occurred. Please try again later"
+	message := constants.ErrorMessage
 	if admin == nil {
 		// New user
 		log.Println("Adding new user " + userIdToAddStr + " to admin list")

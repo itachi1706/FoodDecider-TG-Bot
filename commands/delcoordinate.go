@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/utils"
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -36,7 +37,7 @@ func DelCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	repo := repository.NewFoodsRepository(db)
 	// Check if location already exists
 	location := repo.FindActiveLocationById(locationId)
-	message := "An error has occurred. Please try again later"
+	message := constants.ErrorMessage
 	if location == nil {
 		// New Food
 		message = "Location ID " + locationId.String() + " does not exist\n\nUse /listcoordinates <food id> to get the location ID to delete"

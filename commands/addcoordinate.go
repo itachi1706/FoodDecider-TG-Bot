@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/model"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/services"
@@ -41,7 +42,7 @@ func AddCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	db := utils.GetDbConnection()
 	repo := repository.NewFoodsRepository(db)
 	location := repo.GetFoodLocation(*foodId, latitude, longitude)
-	message := "An error has occurred. Please try again later"
+	message := constants.ErrorMessage
 	if location == nil {
 		// New location
 		log.Println("Creating new location for food " + foodId.String())

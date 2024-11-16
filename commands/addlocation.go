@@ -1,10 +1,12 @@
 package commands
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/model"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/services"
 	"FoodDecider-TG-Bot/utils"
+	"fmt"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
@@ -43,8 +45,8 @@ func AddLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	id, _ := conversation.KeyStrategySenderAndChat(ctx)
 	err = utils.BasicReplyToUser(bot, ctx, message)
-	services.SetString("foodloc-"+id+"-id", food)
-	services.SetString("foodloc-"+id+"-name", friendlyName)
+	services.SetString(fmt.Sprintf("foodloc-%s-id", id), food)
+	services.SetString(fmt.Sprintf("foodloc-%s-name", id), friendlyName)
 	return handlers.NextConversationState(AddFoodLocation)
 }
 
@@ -74,20 +76,23 @@ func AddLocationCommandLocationPin(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	cid, _ := conversation.KeyStrategySenderAndChat(ctx)
 
-	foodIf, get := services.GetString("foodloc-" + cid + "-id")
+	idKey := fmt.Sprintf("foodloc-%s-id", cid)
+	nameKey := fmt.Sprintf("foodloc-%s-name", cid)
+
+	foodIf, get := services.GetString(idKey)
 	if !get {
-		_ = utils.BasicReplyToUser(bot, ctx, "An error has occurred. Please try again later")
+		_ = utils.BasicReplyToUser(bot, ctx, constants.ErrorMessage)
 		return handlers.EndConversation()
 	}
-	services.DeleteString("foodloc-" + cid + "-id")
+	services.DeleteString(idKey)
 	food := foodIf.(*model.Food)
 
-	nameIf, get := services.GetString("foodloc-" + cid + "-name")
+	nameIf, get := services.GetString(nameKey)
 	if !get {
-		_ = utils.BasicReplyToUser(bot, ctx, "An error has occurred. Please try again later")
+		_ = utils.BasicReplyToUser(bot, ctx, constants.ErrorMessage)
 		return handlers.EndConversation()
 	}
-	services.DeleteString("foodloc-" + cid + "-name")
+	services.DeleteString(nameKey)
 	name := nameIf.(string)
 
 	log.Printf("Food ID: %v, Latitude: %v, Longitude: %v, Name: %v\n", food.ID, pinLocation.Latitude, pinLocation.Longitude, name)
@@ -95,7 +100,7 @@ func AddLocationCommandLocationPin(bot *gotgbot.Bot, ctx *ext.Context) error {
 	db := utils.GetDbConnection()
 	repo := repository.NewFoodsRepository(db)
 	location := repo.GetFoodLocation(food.ID, pinLocation.Latitude, pinLocation.Longitude)
-	message := "An error has occurred. Please try again later"
+	message := constants.ErrorMessage
 	if location == nil {
 		// New location
 		log.Println("Creating new location for food " + food.ID.String())

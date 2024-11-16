@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/model"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/services"
@@ -22,7 +23,7 @@ func AddGroupCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	repo := repository.NewFoodsRepository(db)
 	food := repo.FindFoodById(*foodId)
 	// Check if food exists
-	message := "An error has occurred. Please try again later"
+	message := constants.ErrorMessage
 	if food == nil {
 		// New Food
 		message = "Food not found"

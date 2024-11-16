@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/model"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/utils"
@@ -21,7 +22,7 @@ func ListFoodsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	foods := repo.FindAllActiveFoodPaginated(5, 0)
 	message := populateListFoodMessage(foods)
 
-	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend("food-list", 0, true, true))
+	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend(constants.FoodList, 0, true, true))
 }
 
 func populateListFoodMessage(foods []model.Food) string {
@@ -52,7 +53,7 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 		pageCnt = 0
 	}
 
-	answerMsg := "An error occurred. Please try again later"
+	answerMsg := constants.ErrorMessage
 	cont := true
 	if pageCnt <= 0 {
 		// First page
@@ -81,7 +82,7 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	foods := repo.FindAllActiveFoodPaginated(5, pageCnt)
 
 	message := populateListFoodMessage(foods)
-	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))
+	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit(constants.FoodList, pageCnt, true, true))
 
 	return nil
 }
@@ -111,7 +112,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	// pagecnt to int64
 	pageCnt64 := int64(pageCnt)
 
-	answerMsg := "An error occurred. Please try again later"
+	answerMsg := constants.ErrorMessage
 	cont := true
 	if pageCnt64 >= totalPages-1 {
 		// last page
@@ -138,7 +139,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	foods := repo.FindAllActiveFoodPaginated(5, pageCnt)
 
 	message := populateListFoodMessage(foods)
-	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("food-list", pageCnt, true, true))
+	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit(constants.FoodList, pageCnt, true, true))
 
 	return nil
 }

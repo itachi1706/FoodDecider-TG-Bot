@@ -43,7 +43,6 @@ func main() {
 	})
 	updater := ext.NewUpdater(dispatcher, nil)
 
-	// TODO: Add commands here
 	InitCommands(dispatcher)
 	commandInstalled, err := bot.GetMyCommands(nil)
 	if err != nil {

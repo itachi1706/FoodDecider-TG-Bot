@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/utils"
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -41,7 +42,7 @@ func DelAdminCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	db := utils.GetDbConnection()
 	repo := repository.NewAdminsRepository(db)
 	admin := repo.FindActiveAdmin(userIdToDel)
-	message := "An error has occurred. Please try again later"
+	message := constants.ErrorMessage
 	if admin == nil {
 		message = "User ID " + userIdToDelStr + " is not an administrator"
 	} else {
