@@ -21,21 +21,9 @@ const (
 func AddLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddLocation command called by " + ctx.EffectiveSender.Username())
 
-	userId := ctx.EffectiveSender.Id()
-	// Make sure guy is an admin to run
-	if utils.CheckIfAdmin(userId) == false {
-		return utils.BasicReplyToUser(bot, ctx, "This command can only be ran by an administrator")
-	}
-
-	messageOpts := utils.GetArgumentsFromMessage(ctx)
-	log.Printf("Message options: %v\n", messageOpts)
-	if len(messageOpts) < 1 {
-		return utils.BasicReplyToUser(bot, ctx, "Invalid Format\n\nFormat: /addcoordinate <food id> [name]")
-	}
-
-	foodId, err := uuid.Parse(messageOpts[0])
+	_, foodId, messageOpts, err := services.FoodValidationParameterChecks(bot, ctx, 1, "Invalid Format\n\nFormat: /addcoordinate <food id> [name]")
 	if err != nil {
-		return utils.BasicReplyToUser(bot, ctx, "Invalid food id provided")
+		return err
 	}
 
 	var friendlyName string
@@ -46,7 +34,7 @@ func AddLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	db := utils.GetDbConnection()
 	repo := repository.NewFoodsRepository(db)
-	food := repo.FindFoodById(foodId)
+	food := repo.FindFoodById(*foodId)
 	if food == nil {
 		return utils.BasicReplyToUser(bot, ctx, "Food does not exist")
 	}

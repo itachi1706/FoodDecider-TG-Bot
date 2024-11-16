@@ -139,3 +139,24 @@ func GroupHandlingParameter(bot *gotgbot.Bot, ctx *ext.Context, format string) (
 
 	return &userId, &foodId, &groupName, nil
 }
+
+func FoodValidationParameterChecks(bot *gotgbot.Bot, ctx *ext.Context, argLen int, errorMsg string) (*int64, *uuid.UUID, []string, error) {
+	userId := ctx.EffectiveSender.Id()
+	// Make sure guy is an admin to run
+	if utils.CheckIfAdmin(userId) == false {
+		return nil, nil, nil, utils.BasicReplyToUser(bot, ctx, "This command can only be ran by an administrator")
+	}
+
+	messageOpts := utils.GetArgumentsFromMessage(ctx)
+	log.Printf("Message options: %v\n", messageOpts)
+	if len(messageOpts) < argLen {
+		return nil, nil, messageOpts, utils.BasicReplyToUser(bot, ctx, errorMsg)
+	}
+
+	foodId, err := uuid.Parse(messageOpts[0])
+	if err != nil {
+		return nil, nil, messageOpts, utils.BasicReplyToUser(bot, ctx, "Invalid food id provided")
+	}
+
+	return &userId, &foodId, messageOpts, nil
+}
