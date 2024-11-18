@@ -21,9 +21,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: OrjanSkarnes/pull-request-commenter@1.2.3
         with:
-          comment-body: {{steps.gofmtchk.outputs.gofmt-output}}
+          comment-body: ${{steps.gofmtchk.outputs.gofmt-output}}
           comment-title: Go Formatter Result
           comment-search-includes: Go Formatter Result
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      
