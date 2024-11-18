@@ -38,6 +38,13 @@ func GetArgumentsFromMessage(ctx *ext.Context) []string {
 	return messageList[1:]
 }
 
+func GetCommandFromMessage(ctx *ext.Context) string {
+	message := ctx.EffectiveMessage.Text
+	messageList := SplitString(message)
+	// Remove the command from the list
+	return messageList[0]
+}
+
 func GeneratePageKeys(cmdType string, currentPage int, showPrev bool, showNext bool) gotgbot.InlineKeyboardMarkup {
 	var keys [][]gotgbot.InlineKeyboardButton
 	var row []gotgbot.InlineKeyboardButton

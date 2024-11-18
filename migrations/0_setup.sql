@@ -102,3 +102,22 @@ CREATE TABLE past_history
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE commands_log
+(
+    id         int AUTO_INCREMENT PRIMARY KEY,
+    user_id    VARCHAR(36)  NOT NULL,
+    command    VARCHAR(255) NULL,
+    arguments  TEXT         NULL,
+    type       INT          NOT NULL,
+    extra_data TEXT         NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT          NOT NULL,
+    updated_by INT          NULL,
+    version    INT       DEFAULT 1,
+    raw_data   TEXT         NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;

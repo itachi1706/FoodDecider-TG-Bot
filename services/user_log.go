@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-func LogUserFound(ctx *ext.Context) {
+func LogUserFound(ctx *ext.Context) uuid.UUID {
 	// Log user found
 	user := ctx.EffectiveSender
 	log.Printf("User found: %#v", user)
@@ -62,6 +62,8 @@ func LogUserFound(ctx *ext.Context) {
 		db.Save(userObj)
 		db.Save(historyObj)
 	}
+
+	return userObj.ID
 }
 
 func createHistoryObject(userObj *model.Users) *model.PastHistory {

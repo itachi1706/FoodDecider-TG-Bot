@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/model"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/services"
@@ -66,7 +67,7 @@ func getGroupData(foodId *uuid.UUID, pageCnt *int, bot *gotgbot.Bot, cb *gotgbot
 
 func ListGroupsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListGroups previous button clicked by " + ctx.EffectiveSender.Username())
-	services.RunPreCommandScripts(ctx)
+	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
 	log.Println("Callback data: " + cb.Data)
@@ -82,7 +83,7 @@ func ListGroupsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 func ListGroupsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListGroups next button clicked by " + ctx.EffectiveSender.Username())
-	services.RunPreCommandScripts(ctx)
+	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
 	log.Println("Callback data: " + cb.Data)

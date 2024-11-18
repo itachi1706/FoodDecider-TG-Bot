@@ -53,7 +53,7 @@ func AddLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 func AddLocationCommandLocationPin(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddLocation command with new location called by " + ctx.EffectiveSender.Username())
-	services.RunPreCommandScripts(ctx)
+	services.RunPreCommandScriptCustomType(ctx, constants.CONVERSATION)
 
 	userId := ctx.EffectiveSender.Id()
 	// Make sure guy is an admin to run
