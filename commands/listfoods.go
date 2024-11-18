@@ -45,7 +45,7 @@ func populateListFoodMessage(foods []model.Food) string {
 
 func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListFoods previous button clicked by " + ctx.EffectiveSender.Username())
-	services.RunPreCommandScripts(ctx)
+	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
 	log.Println("Callback data: " + cb.Data)
@@ -92,7 +92,7 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListFoods next button clicked by " + ctx.EffectiveSender.Username())
-	services.RunPreCommandScripts(ctx)
+	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
 	log.Println("Callback data: " + cb.Data)

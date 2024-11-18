@@ -63,7 +63,7 @@ func RenameGroupCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 func RenameGroupCommandNewName(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("RenameGroup command with new name called by " + ctx.EffectiveSender.Username())
-	services.RunPreCommandScripts(ctx)
+	services.RunPreCommandScriptCustomType(ctx, constants.CONVERSATION)
 
 	userId := ctx.EffectiveSender.Id()
 	// Make sure guy is an admin to run
