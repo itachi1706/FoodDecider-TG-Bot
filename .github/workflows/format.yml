@@ -1,0 +1,19 @@
+name: Build and Deploy
+
+on: ["push", "pull_request"]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    name: Build Go Packages
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Run Go Formatter check
+        uses: Jerome1337/gofmt-action@v1.0.5
+        with:
+          gofmt-flags: '-l -d'
+      
