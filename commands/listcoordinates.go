@@ -14,6 +14,7 @@ import (
 
 func ListCoordinatesCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListCoordinates command called by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	messageOpts := utils.GetArgumentsFromMessage(ctx)
 	log.Printf("Message options: %v\n", messageOpts)
@@ -69,6 +70,7 @@ func getCoordinatesData(foodId *uuid.UUID, pageCnt *int, bot *gotgbot.Bot, cb *g
 
 func ListCoordinatesCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListCoordinates previous button clicked by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	cb := ctx.Update.CallbackQuery
 	log.Println("Callback data: " + cb.Data)
@@ -84,6 +86,7 @@ func ListCoordinatesCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 func ListCoordinatesCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListGroups next button clicked by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	cb := ctx.Update.CallbackQuery
 	log.Println("Callback data: " + cb.Data)

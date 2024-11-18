@@ -3,6 +3,7 @@ package commands
 import (
 	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/repository"
+	"FoodDecider-TG-Bot/services"
 	"FoodDecider-TG-Bot/utils"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -12,6 +13,7 @@ import (
 
 func DelAdminCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("DelAdmin command called by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	userId := ctx.EffectiveSender.Id()
 	// Make sure guy is an admin to run

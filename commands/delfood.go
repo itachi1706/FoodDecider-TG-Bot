@@ -12,6 +12,7 @@ import (
 
 func DelFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("DelFood command called by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	userId, foodId, _, err := services.FoodValidationParameterChecks(bot, ctx, 1, "Please provide a food id to delete\n\nFormat: /delfood <id>")
 	if err != nil {
