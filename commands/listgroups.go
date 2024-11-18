@@ -14,6 +14,7 @@ import (
 
 func ListGroupsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListGroups command called by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	messageOpts := utils.GetArgumentsFromMessage(ctx)
 	log.Printf("Message options: %v\n", messageOpts)
@@ -65,6 +66,7 @@ func getGroupData(foodId *uuid.UUID, pageCnt *int, bot *gotgbot.Bot, cb *gotgbot
 
 func ListGroupsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListGroups previous button clicked by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	cb := ctx.Update.CallbackQuery
 	log.Println("Callback data: " + cb.Data)
@@ -80,6 +82,7 @@ func ListGroupsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 func ListGroupsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListGroups next button clicked by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	cb := ctx.Update.CallbackQuery
 	log.Println("Callback data: " + cb.Data)

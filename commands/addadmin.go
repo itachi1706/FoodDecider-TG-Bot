@@ -4,6 +4,7 @@ import (
 	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/model"
 	"FoodDecider-TG-Bot/repository"
+	"FoodDecider-TG-Bot/services"
 	"FoodDecider-TG-Bot/utils"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -14,6 +15,7 @@ import (
 
 func AddAdminCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddAdmin command called by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	userId := ctx.EffectiveSender.Id()
 	// Make sure guy is an admin to run

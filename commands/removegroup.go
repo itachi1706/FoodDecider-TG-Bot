@@ -13,6 +13,7 @@ import (
 
 func RemoveGroupCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("RemoveGroup command called by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	userId, foodId, groupName, err := services.GroupHandlingParameter(bot, ctx, "/removegroup <id> <group name>")
 	if err != nil {

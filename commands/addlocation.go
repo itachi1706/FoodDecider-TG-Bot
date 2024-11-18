@@ -22,6 +22,7 @@ const (
 
 func AddLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddLocation command called by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	_, foodId, messageOpts, err := services.FoodValidationParameterChecks(bot, ctx, 1, "Invalid Format\n\nFormat: /addcoordinate <food id> [name]")
 	if err != nil {
@@ -52,6 +53,7 @@ func AddLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 func AddLocationCommandLocationPin(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddLocation command with new location called by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	userId := ctx.EffectiveSender.Id()
 	// Make sure guy is an admin to run

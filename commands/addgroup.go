@@ -13,6 +13,7 @@ import (
 
 func AddGroupCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddGroup command called by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScripts(ctx)
 
 	userId, foodId, groupName, err := services.GroupHandlingParameter(bot, ctx, "/addgroup <food id> <group name>")
 	if err != nil {
