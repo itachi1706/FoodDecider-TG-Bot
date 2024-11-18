@@ -64,7 +64,3 @@ func RunPreCommandScriptCustomType(ctx *ext.Context, messageType constants.Messa
 		db.Save(commandLog)
 	}()
 }
-
-func handleCommandLog() {
-
-}
