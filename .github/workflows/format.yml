@@ -13,7 +13,17 @@ jobs:
         with:
           go-version: '1.22'
       - name: Run Go Formatter check
+        id: gofmtchk
         uses: Jerome1337/gofmt-action@v1.0.5
         with:
           gofmt-flags: '-l -d'
+      - name: Comment in PR
+        if: github.event_name == 'pull_request'
+        uses: OrjanSkarnes/pull-request-commenter@1.2.3
+        with:
+          comment-body: {{steps.gofmtchk.outputs.gofmt-output}}
+          comment-title: Go Formatter Result
+          comment-search-includes: Go Formatter Result
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
       
