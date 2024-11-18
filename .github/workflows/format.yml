@@ -1,11 +1,11 @@
-name: Build and Deploy
+name: Formatting Checks
 
 on: ["push", "pull_request"]
 
 jobs:
-  format:
+  gofmt:
     runs-on: ubuntu-latest
-    name: Build Go Packages
+    name: Go Formatting Check
     steps:
       - uses: actions/checkout@v4
       - name: Set up Go
