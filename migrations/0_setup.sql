@@ -107,6 +107,7 @@ CREATE TABLE commands_log
 (
     id         int AUTO_INCREMENT PRIMARY KEY,
     user_id    VARCHAR(36)  NOT NULL,
+    chat_id             INT    NOT NULL,
     command    VARCHAR(255) NULL,
     arguments  TEXT         NULL,
     type       INT          NOT NULL,
@@ -118,6 +119,44 @@ CREATE TABLE commands_log
     version    INT       DEFAULT 1,
     raw_data   TEXT         NULL,
     FOREIGN KEY (user_id) REFERENCES users (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE rolls
+(
+    id                  VARCHAR(36) PRIMARY KEY,
+    type                INT            NOT NULL,
+    latitude            DECIMAL(10, 8) NULL,
+    longitude           DECIMAL(11, 8) NULL,
+    chat_id             INT    NOT NULL,
+    group_name          VARCHAR(255)   NULL,
+    decided_food_id     VARCHAR(36)    NOT NULL,
+    decided_location_id VARCHAR(36)    NULL,
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by          INT            NOT NULL,
+    updated_by          INT            NULL,
+    FOREIGN KEY (decided_food_id) REFERENCES food (id),
+    FOREIGN KEY (decided_location_id) REFERENCES locations (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE rolls_history
+(
+    id                  int AUTO_INCREMENT PRIMARY KEY,
+    roll_id             VARCHAR(36) NOT NULL,
+    decided_food_id     VARCHAR(36) NOT NULL,
+    decided_location_id VARCHAR(36) NULL,
+    choices             TEXT        NOT NULL,
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by          INT         NOT NULL,
+    updated_by          INT         NULL,
+    FOREIGN KEY (roll_id) REFERENCES rolls (id),
+    FOREIGN KEY (decided_food_id) REFERENCES food (id),
+    FOREIGN KEY (decided_location_id) REFERENCES locations (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;

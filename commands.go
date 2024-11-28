@@ -48,6 +48,7 @@ func InitCommands(dispatcher *ext.Dispatcher) {
 	dispatcher.AddHandler(handlers.NewCommand("addcoordinate", commands.AddCoordinateCommand))
 	dispatcher.AddHandler(handlers.NewCommand("delcoordinate", commands.DelCoordinateCommand))
 	dispatcher.AddHandler(handlers.NewCommand("listcoordinates", commands.ListCoordinatesCommand))
+	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("list-coordinates"), commands.ListCoordinatesCommandTrigger))
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-coordinate-list"), commands.ListCoordinatesCommandPrev))
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-coordinate-list"), commands.ListCoordinatesCommandNext))
 	dispatcher.AddHandler(handlers.NewConversation(
@@ -60,6 +61,9 @@ func InitCommands(dispatcher *ext.Dispatcher) {
 			StateStorage: conversation.NewInMemoryStorage(conversation.KeyStrategySenderAndChat),
 			AllowReEntry: true,
 		}))
+
+	dispatcher.AddHandler(handlers.NewCommand("randomfood", commands.RandomFoodCommand))
+	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("reroll-GENERAL"), commands.RandomFoodCommandReroll))
 
 	log.Println("Commands initialized")
 }

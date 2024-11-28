@@ -38,6 +38,31 @@ func ListCoordinatesCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend("coordinate-list+"+foodId.String()+"+", 0, true, true))
 }
 
+func ListCoordinatesCommandTrigger(bot *gotgbot.Bot, ctx *ext.Context) error {
+	log.Println("ListCoordinates trigger button clicked by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
+
+	cb := ctx.Update.CallbackQuery
+	log.Println("Callback data: " + cb.Data)
+	foodIdStr := cb.Data[len("list-coordinates-"):]
+	foodId, err := uuid.Parse(foodIdStr)
+	if err != nil {
+		_, err = cb.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
+			Text: constants.RerollError,
+		})
+		return err
+	}
+
+	db := utils.GetDbConnection()
+	repo := repository.NewFoodsRepository(db)
+	// Get first 5 food results with status A
+	foodGroups := repo.FindAllLocationsForFoodPaginated(foodId, 5, 0)
+	food := repo.FindFoodById(foodId)
+	message := populateListFoodLocationsMessage(foodGroups, food)
+
+	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend("coordinate-list+"+foodId.String()+"+", 0, true, true))
+}
+
 func populateListFoodLocationsMessage(groups []model.Locations, food *model.Food) string {
 	foodName := "Unknown Food"
 	if food != nil {
