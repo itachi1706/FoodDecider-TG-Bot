@@ -59,7 +59,7 @@ func sendWithRerollButton(rollInfo model.Rolls, trigger *gotgbot.Sender, count i
 	messageFmt += "Selected food: %s\n"
 	messageFmt += "Description: %s\n\n"
 	if locationCnt > 0 {
-		messageFmt += "There are %d locations found for this option. Run /listcoordinates %s to view them\n\n"
+		messageFmt += "There are %d locations found for this option. Click the button below to view more\n\n"
 	} else {
 		messageFmt += "There are no locations found for this option. Please go online to find your nearest location yourself!\n\n"
 	}
@@ -73,7 +73,7 @@ func sendWithRerollButton(rollInfo model.Rolls, trigger *gotgbot.Sender, count i
 
 	var message string
 	if locationCnt > 0 {
-		message = fmt.Sprintf(messageFmt, food.Name, food.Description, locationCnt, food.ID.String(), count, updatedTimeStr, trigger.Name(), trigger.Username())
+		message = fmt.Sprintf(messageFmt, food.Name, food.Description, locationCnt, count, updatedTimeStr, trigger.Name(), trigger.Username())
 	} else {
 		message = fmt.Sprintf(messageFmt, food.Name, food.Description, count, updatedTimeStr, trigger.Name(), trigger.Username())
 	}
