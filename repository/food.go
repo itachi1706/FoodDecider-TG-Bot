@@ -152,3 +152,10 @@ func (f FoodRepository) FindActiveLocationById(id uuid.UUID) *model.Locations {
 
 	return &location
 }
+
+func (f FoodRepository) FindAllFoodsFromGroups(groups []string) []model.Food {
+	var foods []model.Food
+	f.db.Joins("JOIN food_groups_link f ON f.food_id = food.id").Joins("JOIN food_groups g ON g.id = f.group_id").Where("g.name IN (?) AND f.status = ?", groups, "A").Distinct("food.id").Find(&foods)
+
+	return foods
+}
