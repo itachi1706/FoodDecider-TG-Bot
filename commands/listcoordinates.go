@@ -47,7 +47,7 @@ func ListCoordinatesCommandTrigger(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("constants.CallbackDataLog" + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 	foodIdStr := cb.Data[len("list-coordinates-"):]
 	foodId, err := uuid.Parse(foodIdStr)
 	if err != nil {
@@ -103,7 +103,7 @@ func ListCoordinatesCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("constants.CallbackDataLog" + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 
 	err, foodId, pageCnt := services.HandleFoodPrevCommands(bot, cb)
 	if err != nil || foodId == nil || pageCnt == nil {
@@ -119,7 +119,7 @@ func ListCoordinatesCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("constants.CallbackDataLog" + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 
 	err, foodId, pageCnt := services.HandleFoodNextCommands(bot, cb)
 	if err != nil || foodId == nil || pageCnt == nil {

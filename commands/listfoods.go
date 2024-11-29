@@ -48,7 +48,7 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("constants.CallbackDataLog" + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 
 	pageCnt, err := strconv.Atoi(strings.Replace(cb.Data, "previous-food-list-", "", -1))
 	if err != nil {
@@ -95,7 +95,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("constants.CallbackDataLog" + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 
 	pageCnt, err := strconv.Atoi(strings.Replace(cb.Data, "next-food-list-", "", -1))
 	if err != nil {

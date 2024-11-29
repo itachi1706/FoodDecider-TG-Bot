@@ -85,7 +85,7 @@ func RandomFoodCommandReroll(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("constants.CallbackDataLog" + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 
 	// Strip out "reroll-GENERAL-" from callback data to get roll UUID
 	rollIdStr := cb.Data[len("reroll-GENERAL-"):]
