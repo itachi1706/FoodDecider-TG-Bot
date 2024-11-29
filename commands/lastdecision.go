@@ -41,8 +41,8 @@ func LastDecisionCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	if location != nil {
 		messageFmt += "Location: %s (%f,%f)\n"
 	}
-	messageFmt += "\nMade by: %s (%s) on %s\nDecision ID: %s"
-	
+	messageFmt += "\nRequested by: %s (%s) on %s\nDecision ID: %s"
+
 	var message string
 	if location != nil {
 		message = fmt.Sprintf(messageFmt, food.Name, location.Name, location.Latitude, location.Latitude, user.FullName, user.Username, lastRoll.UpdatedAt.Format(constants.DateTimeFormat), lastRoll.ID)

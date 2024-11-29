@@ -65,6 +65,9 @@ func InitCommands(dispatcher *ext.Dispatcher) {
 	dispatcher.AddHandler(handlers.NewCommand("randomfood", commands.RandomFoodCommand))
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("reroll-GENERAL"), commands.RandomFoodCommandReroll))
 	dispatcher.AddHandler(handlers.NewCommand("lastdecision", commands.LastDecisionCommand))
+	dispatcher.AddHandler(handlers.NewCommand("decisionhistory", commands.DecisionHistoryCommand))
+	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-decision-history-"), commands.DecisionHistoryCommandPrev))
+	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-decision-history-"), commands.DecisionHistoryCommandNext))
 
 	log.Println("Commands initialized")
 }

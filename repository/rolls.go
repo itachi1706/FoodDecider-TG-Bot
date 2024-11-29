@@ -34,3 +34,17 @@ func (f RollsRepository) FindLastRollByChatId(chatId int64) *model.Rolls {
 
 	return &rolls
 }
+
+func (f RollsRepository) FindAllRollsByChatIdOrderRecentPaginated(chatId int64, size int, offset int) []model.Rolls {
+	var rolls []model.Rolls
+	f.db.Where(&model.Rolls{ChatId: chatId}).Order(clause.OrderByColumn{Column: clause.Column{Name: "updated_at"}, Desc: true}).Limit(size).Offset(offset * size).Find(&rolls)
+
+	return rolls
+}
+
+func (f RollsRepository) GetRollsCountForChatId(chatId int64) int64 {
+	var count int64
+	f.db.Model(&model.Rolls{}).Where(&model.Rolls{ChatId: chatId}).Count(&count)
+
+	return count
+}
