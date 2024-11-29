@@ -44,13 +44,13 @@ func RandomFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	db.Save(&rollHistory)
 
 	// Send message to user with reroll button
-	message, hasLoc := sendWithRerollButton(rollInfo, sender, count, false)
+	message, hasLoc := sendWithRerollButtonGeneral(rollInfo, sender, count, false)
 	messageOpts := utils.GenerateRerollKeysSend(constants.GENERAL, rollInfo, hasLoc)
 
 	return utils.ReplyUserWithOpts(bot, ctx, message, messageOpts)
 }
 
-func sendWithRerollButton(rollInfo model.Rolls, trigger *gotgbot.Sender, count int64, reroll bool) (string, bool) {
+func sendWithRerollButtonGeneral(rollInfo model.Rolls, trigger *gotgbot.Sender, count int64, reroll bool) (string, bool) {
 	foodRepo := repository.NewFoodsRepository(utils.GetDbConnection())
 	food := foodRepo.FindFoodById(rollInfo.DecidedFoodID)
 	locationCnt := foodRepo.FindAllLocationsForFoodCount(rollInfo.DecidedFoodID)
@@ -86,52 +86,13 @@ func sendWithRerollButton(rollInfo model.Rolls, trigger *gotgbot.Sender, count i
 
 func RandomFoodCommandReroll(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("RandomFood reroll button clicked by " + ctx.EffectiveSender.Username())
-	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
-
-	cb := ctx.Update.CallbackQuery
-	log.Println(constants.CallbackDataLog + cb.Data)
-
-	// Strip out "reroll-GENERAL-" from callback data to get roll UUID
-	rollIdStr := cb.Data[len("reroll-GENERAL-"):]
-	rollId, err := uuid.Parse(rollIdStr)
+	rollInfo, count, cb, err := services.RerollCommon(bot, ctx, constants.GENERAL)
 	if err != nil {
-		_, err = cb.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
-			Text: constants.RerollError,
-		})
 		return err
 	}
-
-	// Get roll info
-	db := utils.GetDbConnection()
-	rollRepo := repository.NewRollsRepository(db)
-	rollInfo := rollRepo.FindRollsById(rollId)
-
-	// Check if roll exists
-	if rollInfo == nil {
-		_, err = cb.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
-			Text: constants.RerollError,
-		})
-		return err
-	}
-
-	// Update roll info
-	rollInfo.UpdatedBy = ctx.EffectiveSender.Id()
-	rollHistory, count, err := services.RollForFood(*rollInfo)
-	if err != nil {
-		log.Println("Error re-rolling decision: " + err.Error())
-		_, err = cb.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
-			Text: constants.RerollError,
-		})
-		return err
-	}
-
-	rollInfo.DecidedFoodID = rollHistory.DecidedFoodID
-	rollInfo.DecidedLocationID = nil
-	db.Save(&rollInfo)
-	db.Save(&rollHistory)
 
 	// Send message to user with reroll button
-	message, hasLoc := sendWithRerollButton(*rollInfo, ctx.EffectiveSender, count, true)
+	message, hasLoc := sendWithRerollButtonGeneral(*rollInfo, ctx.EffectiveSender, count, true)
 	messageOpts := utils.GenerateRerollKeysEdit(constants.GENERAL, *rollInfo, hasLoc)
 
 	_, err = cb.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{

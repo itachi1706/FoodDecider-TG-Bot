@@ -70,6 +70,19 @@ func InitCommands(dispatcher *ext.Dispatcher) {
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-decision-history-"), commands.DecisionHistoryCommandNext))
 	dispatcher.AddHandler(handlers.NewCommand("rollhistory", commands.RollHistoryCommand))
 
+	// Random group
+	dispatcher.AddHandler(handlers.NewConversation(
+		[]ext.Handler{handlers.NewCommand("randomgroups", commands.RandomGroupsCommand)},
+		map[string][]ext.Handler{
+			commands.RandomGroupSpecify: {handlers.NewMessage(noCommands, commands.RandomGroupsCommandGroupList)},
+		},
+		&handlers.ConversationOpts{
+			Exits:        []ext.Handler{handlers.NewCommand("cancel", commands.CancelCommand)},
+			StateStorage: conversation.NewInMemoryStorage(conversation.KeyStrategySenderAndChat),
+			AllowReEntry: true,
+		}))
+	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("reroll-GROUP"), commands.RandomGroupsCommandReroll))
+
 	log.Println("Commands initialized")
 }
 
