@@ -8,6 +8,7 @@ const (
 	RerollSuccess       = "Reroll successful!"
 	FirstPage           = "You are already on the first page"
 	GoToPrevious        = "Going to previous page"
+	CallbackDataLog     = "Callback data: "
 
 	DateTimeFormat = "2006-01-02 15:04:05"
 )

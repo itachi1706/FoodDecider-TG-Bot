@@ -72,7 +72,7 @@ func DecisionHistoryCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("Callback data: " + cb.Data)
+	log.Println("constants.CallbackDataLog" + cb.Data)
 
 	pageCnt, err := strconv.Atoi(strings.Replace(cb.Data, "previous-decision-history-", "", -1))
 	if err != nil {
@@ -119,7 +119,7 @@ func DecisionHistoryCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("Callback data: " + cb.Data)
+	log.Println("constants.CallbackDataLog" + cb.Data)
 
 	pageCnt, err := strconv.Atoi(strings.Replace(cb.Data, "next-decision-history-", "", -1))
 	if err != nil {
