@@ -68,8 +68,7 @@ func sendWithRerollButton(rollInfo model.Rolls, trigger *gotgbot.Sender, count i
 
 	updatedTime := rollInfo.UpdatedAt
 	// Format the time to be more readable
-	updatedTimeFmtString := "2006-01-02 15:04:05"
-	updatedTimeStr := updatedTime.Format(updatedTimeFmtString)
+	updatedTimeStr := updatedTime.Format(constants.DateTimeFormat)
 
 	var message string
 	if locationCnt > 0 {
