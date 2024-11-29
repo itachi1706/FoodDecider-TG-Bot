@@ -44,13 +44,13 @@ func RandomFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	db.Save(&rollHistory)
 
 	// Send message to user with reroll button
-	message, hasLoc := sendWithRerollButton(rollInfo, sender, count)
+	message, hasLoc := sendWithRerollButton(rollInfo, sender, count, false)
 	messageOpts := utils.GenerateRerollKeysSend(constants.GENERAL, rollInfo, hasLoc)
 
 	return utils.ReplyUserWithOpts(bot, ctx, message, messageOpts)
 }
 
-func sendWithRerollButton(rollInfo model.Rolls, trigger *gotgbot.Sender, count int64) (string, bool) {
+func sendWithRerollButton(rollInfo model.Rolls, trigger *gotgbot.Sender, count int64, reroll bool) (string, bool) {
 	foodRepo := repository.NewFoodsRepository(utils.GetDbConnection())
 	food := foodRepo.FindFoodById(rollInfo.DecidedFoodID)
 	locationCnt := foodRepo.FindAllLocationsForFoodCount(rollInfo.DecidedFoodID)
@@ -64,7 +64,11 @@ func sendWithRerollButton(rollInfo model.Rolls, trigger *gotgbot.Sender, count i
 		messageFmt += "There are no locations found for this option. Please go online to find your nearest location yourself!\n\n"
 	}
 	messageFmt += "This was randomized from a list of %d food options\n\n"
-	messageFmt += "Decision was ran on %s by %s (%s)"
+	if reroll {
+		messageFmt += "Decision was re-ran on %s by %s (%s)"
+	} else {
+		messageFmt += "Decision was ran on %s by %s (%s)"
+	}
 
 	updatedTime := rollInfo.UpdatedAt
 	// Format the time to be more readable
@@ -127,7 +131,7 @@ func RandomFoodCommandReroll(bot *gotgbot.Bot, ctx *ext.Context) error {
 	db.Save(&rollHistory)
 
 	// Send message to user with reroll button
-	message, hasLoc := sendWithRerollButton(*rollInfo, ctx.EffectiveSender, count)
+	message, hasLoc := sendWithRerollButton(*rollInfo, ctx.EffectiveSender, count, true)
 	messageOpts := utils.GenerateRerollKeysEdit(constants.GENERAL, *rollInfo, hasLoc)
 
 	_, err = cb.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
