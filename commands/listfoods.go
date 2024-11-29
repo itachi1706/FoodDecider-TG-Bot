@@ -60,10 +60,10 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	cont := true
 	if pageCnt <= 0 {
 		// First page
-		answerMsg = "You are already on the first page"
+		answerMsg = constants.FirstPage
 		cont = false
 	} else {
-		answerMsg = "Going to previous page"
+		answerMsg = constants.GoToPrevious
 		pageCnt--
 	}
 
