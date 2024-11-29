@@ -17,6 +17,10 @@ func BasicReplyToUserWithMarkdown(bot *gotgbot.Bot, ctx *ext.Context, message st
 	return replyUser(bot, ctx, message, &gotgbot.SendMessageOpts{ParseMode: "Markdown"})
 }
 
+func BasicReplyToUserWithMarkdownV2(bot *gotgbot.Bot, ctx *ext.Context, message string) error {
+	return replyUser(bot, ctx, message, &gotgbot.SendMessageOpts{ParseMode: "MarkdownV2"})
+}
+
 func BasicReplyToUserWithHTML(bot *gotgbot.Bot, ctx *ext.Context, message string) error {
 	return replyUser(bot, ctx, message, &gotgbot.SendMessageOpts{ParseMode: "HTML"})
 }

@@ -68,6 +68,7 @@ func InitCommands(dispatcher *ext.Dispatcher) {
 	dispatcher.AddHandler(handlers.NewCommand("decisionhistory", commands.DecisionHistoryCommand))
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-decision-history-"), commands.DecisionHistoryCommandPrev))
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-decision-history-"), commands.DecisionHistoryCommandNext))
+	dispatcher.AddHandler(handlers.NewCommand("rollhistory", commands.RollHistoryCommand))
 
 	log.Println("Commands initialized")
 }

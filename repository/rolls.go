@@ -48,3 +48,13 @@ func (f RollsRepository) GetRollsCountForChatId(chatId int64) int64 {
 
 	return count
 }
+
+func (f RollsRepository) GetAllHistoryForRolls(rollId uuid.UUID) []model.RollsHistory {
+	var history []model.RollsHistory
+
+	// First record will be latest
+	f.db.Where(&model.RollsHistory{RollID: rollId}).Order(clause.OrderByColumn{Column: clause.Column{Name: "updated_at"}, Desc: true}).Find(&history)
+
+	return history
+
+}

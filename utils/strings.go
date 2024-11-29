@@ -30,6 +30,28 @@ func EscapeMarkdown(message string) string {
 	return message
 }
 
+func EscapeMarkdownV2(message string) string {
+	message = strings.ReplaceAll(message, "_", "\\_")
+	message = strings.ReplaceAll(message, "*", "\\*")
+	message = strings.ReplaceAll(message, "[", "\\[")
+	message = strings.ReplaceAll(message, "]", "\\]")
+	message = strings.ReplaceAll(message, "(", "\\(")
+	message = strings.ReplaceAll(message, ")", "\\)")
+	message = strings.ReplaceAll(message, "~", "\\~")
+	message = strings.ReplaceAll(message, "`", "\\`")
+	message = strings.ReplaceAll(message, ">", "\\>")
+	message = strings.ReplaceAll(message, "#", "\\#")
+	message = strings.ReplaceAll(message, "+", "\\+")
+	message = strings.ReplaceAll(message, "-", "\\-")
+	message = strings.ReplaceAll(message, "=", "\\=")
+	message = strings.ReplaceAll(message, "|", "\\|")
+	message = strings.ReplaceAll(message, "{", "\\{")
+	message = strings.ReplaceAll(message, "}", "\\}")
+	message = strings.ReplaceAll(message, ".", "\\.")
+	message = strings.ReplaceAll(message, "!", "\\!")
+	return message
+}
+
 func Capitalize(message string) string {
 	if len(message) == 0 {
 		return message
