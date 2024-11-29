@@ -13,6 +13,10 @@ import (
 	"log"
 )
 
+const (
+	CoordinateListGrp = "coordinate-list+"
+)
+
 func ListCoordinatesCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListCoordinates command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
@@ -35,7 +39,32 @@ func ListCoordinatesCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	food := repo.FindFoodById(foodId)
 	message := populateListFoodLocationsMessage(foodGroups, food)
 
-	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend("coordinate-list+"+foodId.String()+"+", 0, true, true))
+	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend(CoordinateListGrp+foodId.String()+"+", 0, true, true))
+}
+
+func ListCoordinatesCommandTrigger(bot *gotgbot.Bot, ctx *ext.Context) error {
+	log.Println("ListCoordinates trigger button clicked by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
+
+	cb := ctx.Update.CallbackQuery
+	log.Println(constants.CallbackDataLog + cb.Data)
+	foodIdStr := cb.Data[len("list-coordinates-"):]
+	foodId, err := uuid.Parse(foodIdStr)
+	if err != nil {
+		_, err = cb.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
+			Text: constants.RerollError,
+		})
+		return err
+	}
+
+	db := utils.GetDbConnection()
+	repo := repository.NewFoodsRepository(db)
+	// Get first 5 food results with status A
+	foodGroups := repo.FindAllLocationsForFoodPaginated(foodId, 5, 0)
+	food := repo.FindFoodById(foodId)
+	message := populateListFoodLocationsMessage(foodGroups, food)
+
+	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend(CoordinateListGrp+foodId.String()+"+", 0, true, true))
 }
 
 func populateListFoodLocationsMessage(groups []model.Locations, food *model.Food) string {
@@ -64,7 +93,7 @@ func getCoordinatesData(foodId *uuid.UUID, pageCnt *int, bot *gotgbot.Bot, cb *g
 	foodLocations := repo.FindAllLocationsForFoodPaginated(*foodId, 5, *pageCnt)
 	food := repo.FindFoodById(*foodId)
 	message := populateListFoodLocationsMessage(foodLocations, food)
-	_, _, err := cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit("coordinate-list+"+foodId.String()+"+", *pageCnt, true, true))
+	_, _, err := cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit(CoordinateListGrp+foodId.String()+"+", *pageCnt, true, true))
 
 	return err
 }
@@ -74,7 +103,7 @@ func ListCoordinatesCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("Callback data: " + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 
 	err, foodId, pageCnt := services.HandleFoodPrevCommands(bot, cb)
 	if err != nil || foodId == nil || pageCnt == nil {
@@ -90,7 +119,7 @@ func ListCoordinatesCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("Callback data: " + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 
 	err, foodId, pageCnt := services.HandleFoodNextCommands(bot, cb)
 	if err != nil || foodId == nil || pageCnt == nil {

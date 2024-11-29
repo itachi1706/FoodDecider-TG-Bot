@@ -48,10 +48,10 @@ func HandleFoodPrevCommands(bot *gotgbot.Bot, cb *gotgbot.CallbackQuery) (error,
 	cont := true
 	if pageCnt <= 0 {
 		// First page
-		answerMsg = "You are already on the first page"
+		answerMsg = constants.FirstPage
 		cont = false
 	} else {
-		answerMsg = "Going to previous page"
+		answerMsg = constants.GoToPrevious
 		pageCnt--
 	}
 

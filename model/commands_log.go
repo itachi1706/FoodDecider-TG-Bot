@@ -9,6 +9,7 @@ import (
 type CommandsLog struct {
 	ID        int                   `gorm:"column:id;AUTO_INCREMENT;primary_key"`
 	UserID    uuid.UUID             `gorm:"column:user_id;NOT NULL"`
+	ChatId    int64                 `gorm:"column:chat_id;NOT NULL"`
 	Command   string                `gorm:"column:command"`
 	Arguments string                `gorm:"column:arguments"`
 	Type      constants.MessageType `gorm:"column:type;NOT NULL"`

@@ -48,7 +48,7 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("Callback data: " + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 
 	pageCnt, err := strconv.Atoi(strings.Replace(cb.Data, "previous-food-list-", "", -1))
 	if err != nil {
@@ -60,10 +60,10 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	cont := true
 	if pageCnt <= 0 {
 		// First page
-		answerMsg = "You are already on the first page"
+		answerMsg = constants.FirstPage
 		cont = false
 	} else {
-		answerMsg = "Going to previous page"
+		answerMsg = constants.GoToPrevious
 		pageCnt--
 	}
 
@@ -95,7 +95,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	cb := ctx.Update.CallbackQuery
-	log.Println("Callback data: " + cb.Data)
+	log.Println(constants.CallbackDataLog + cb.Data)
 
 	pageCnt, err := strconv.Atoi(strings.Replace(cb.Data, "next-food-list-", "", -1))
 	if err != nil {

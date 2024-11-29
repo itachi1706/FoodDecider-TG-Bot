@@ -41,6 +41,13 @@ func (f FoodRepository) FindAllActiveFoodPaginated(size int, offset int) []model
 	return foods
 }
 
+func (f FoodRepository) FindAllActiveFood() []model.Food {
+	var foods []model.Food
+	f.db.Where(&model.Food{Status: "A"}).Find(&foods)
+
+	return foods
+}
+
 func (f FoodRepository) GetFoodCount() int64 {
 	var count int64
 	f.db.Model(&model.Food{}).Where(&model.Food{Status: "A"}).Count(&count)
@@ -127,6 +134,13 @@ func (f FoodRepository) FindAllLocationsForFoodPaginated(foodId uuid.UUID, size 
 	f.db.Where(&model.Locations{FoodID: foodId, Status: "A"}).Limit(size).Offset(offset * size).Find(&locations)
 
 	return locations
+}
+
+func (f FoodRepository) FindAllLocationsForFoodCount(foodId uuid.UUID) int64 {
+	var count int64
+	f.db.Model(&model.Locations{}).Where(&model.Locations{FoodID: foodId, Status: "A"}).Count(&count)
+
+	return count
 }
 
 func (f FoodRepository) FindActiveLocationById(id uuid.UUID) *model.Locations {

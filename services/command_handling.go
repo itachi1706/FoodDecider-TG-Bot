@@ -20,6 +20,7 @@ func RunPreCommandScriptCustomType(ctx *ext.Context, messageType constants.Messa
 		uuid := LogUserFound(ctx)
 		message := ctx.EffectiveMessage
 		user := ctx.EffectiveSender
+		chatId := ctx.EffectiveChat.Id
 
 		messageString, err := json.Marshal(message)
 		if err != nil {
@@ -28,6 +29,7 @@ func RunPreCommandScriptCustomType(ctx *ext.Context, messageType constants.Messa
 
 		commandLog := &model.CommandsLog{
 			UserID:    uuid,
+			ChatId:    chatId,
 			Type:      messageType,
 			CreatedBy: user.Id(),
 			RawData:   string(messageString),
