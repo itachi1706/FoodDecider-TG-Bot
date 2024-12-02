@@ -17,3 +17,8 @@ type Locations struct {
 	UpdatedBy int64     `gorm:"column:updated_by"`
 	Status    string    `gorm:"column:status;default:A"`
 }
+
+type LocationDistance struct {
+	Location Locations
+	Distance float64
+}

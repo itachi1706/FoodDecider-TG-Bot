@@ -10,6 +10,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/google/uuid"
 	"log"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -48,7 +49,7 @@ func RollForFood(rollInfo model.Rolls) (*model.RollsHistory, int64, error) {
 		if locationObj == nil {
 			log.Println("Location not found. Ignoring and treating as no locations")
 		} else {
-			decidedLocation = &decidedFood
+			decidedLocation = &locationObj.ID
 			decidedFood = locationObj.FoodID
 		}
 	}
@@ -103,7 +104,76 @@ func rollForGeneralFood(foodRepo repository.FoodRepository, rollInfo model.Rolls
 }
 
 func rollForLocationFood(foodRepo repository.FoodRepository, rollInfo model.Rolls) (uuid.UUID, string, int64, error) {
-	return rollForGeneralFood(foodRepo, rollInfo) // Coming Soon
+	log.Println("Rolling for location food")
+
+	// Get current location
+	latitude := rollInfo.Latitude
+	longitude := rollInfo.Longitude
+	if latitude == 0 && longitude == 0 {
+		return uuid.Nil, "", 0, errors.New("location not provided")
+	}
+
+	// Get all locations
+	locations := foodRepo.FindAllActiveLocations()
+
+	// Filter locations based on distance
+	locationDistances := filterLocationsByDistance(locations, latitude, longitude)
+	slices.SortFunc(locationDistances, func(a, b model.LocationDistance) int {
+		if a.Distance < b.Distance {
+			return -1
+		}
+		if a.Distance > b.Distance {
+			return 1
+		}
+		return 0
+	})
+
+	// Get nearest 10 locations if there are 10 or more locations, else get all locations
+	myNearestLocations := make([]model.LocationDistance, 0)
+	if len(locationDistances) < 10 {
+		myNearestLocations = locationDistances
+	} else {
+		myNearestLocations = locationDistances[:10]
+	}
+
+	// Randomize from this list
+	randomIndex, err := GetTrueRandomNumber(0, int64(len(myNearestLocations)-1))
+	if err != nil {
+		return uuid.Nil, "", 0, errors.New("error getting random number. Please try again later")
+	}
+
+	// Get food from location and distance
+	nearestLocation := myNearestLocations[randomIndex]
+
+	// Get all food object from locations
+	foodIds := make([]uuid.UUID, 0)
+	for _, location := range myNearestLocations {
+		foodIds = append(foodIds, location.Location.FoodID)
+	}
+
+	foodChoice := foodRepo.FindAllFoodsByIds(foodIds)
+	// List choice name in a text string
+	choiceString := ""
+	for i, food := range foodChoice {
+		choiceString += strconv.Itoa(i+1) + ". " + food.Name + "\n"
+	}
+
+	return nearestLocation.Location.ID, choiceString, int64(len(myNearestLocations)), nil
+}
+
+func filterLocationsByDistance(locations []model.Locations, latitude float64, longitude float64) []model.LocationDistance {
+	// Return an array of locationdistance
+	finalData := make([]model.LocationDistance, 0)
+	for _, location := range locations {
+		// Calculate distance via Vincenty method
+		distance := utils.VincentyDistance(latitude, longitude, location.Latitude, location.Longitude)
+		finalData = append(finalData, model.LocationDistance{
+			Location: location,
+			Distance: distance,
+		})
+	}
+
+	return finalData
 }
 
 func rollForGroupFood(foodRepo repository.FoodRepository, rollInfo model.Rolls) (uuid.UUID, string, int64, error) {
@@ -162,7 +232,7 @@ func RerollCommon(bot *gotgbot.Bot, ctx *ext.Context, rollType constants.Decisio
 	}
 
 	rollInfo.DecidedFoodID = rollHistory.DecidedFoodID
-	rollInfo.DecidedLocationID = nil
+	rollInfo.DecidedLocationID = rollHistory.DecidedLocationID
 	db.Save(&rollInfo)
 	db.Save(&rollHistory)
 

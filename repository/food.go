@@ -143,6 +143,13 @@ func (f FoodRepository) FindAllLocationsForFoodCount(foodId uuid.UUID) int64 {
 	return count
 }
 
+func (f FoodRepository) FindAllActiveLocations() []model.Locations {
+	var locations []model.Locations
+	f.db.Model(&model.Locations{}).Where(&model.Locations{Status: "A"}).Scan(&locations)
+
+	return locations
+}
+
 func (f FoodRepository) FindActiveLocationById(id uuid.UUID) *model.Locations {
 	var location model.Locations
 	result := f.db.Where(&model.Locations{ID: id, Status: "A"}).First(&location)
@@ -156,6 +163,13 @@ func (f FoodRepository) FindActiveLocationById(id uuid.UUID) *model.Locations {
 func (f FoodRepository) FindAllFoodsFromGroups(groups []string) []model.Food {
 	var foods []model.Food
 	f.db.Joins("JOIN food_groups_link f ON f.food_id = food.id").Joins("JOIN food_groups g ON g.id = f.group_id").Where("g.name IN (?) AND f.status = ?", groups, "A").Distinct("food.id").Find(&foods)
+
+	return foods
+}
+
+func (f FoodRepository) FindAllFoodsByIds(ids []uuid.UUID) []model.Food {
+	var foods []model.Food
+	f.db.Where("id IN (?)", ids).Find(&foods)
 
 	return foods
 }
