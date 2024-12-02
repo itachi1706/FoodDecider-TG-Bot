@@ -129,6 +129,7 @@ func sendWithRerollButtonGroups(rollInfo model.Rolls, trigger *gotgbot.Sender, c
 
 func RandomGroupsCommandReroll(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("RandomGroups reroll button clicked by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	rollInfo, count, cb, err := services.RerollCommon(bot, ctx, constants.GROUP)
 	if err != nil {

@@ -63,6 +63,7 @@ func RandomLocationCommandLocationPin(bot *gotgbot.Bot, ctx *ext.Context) error 
 
 func RandomLocationCommandReroll(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("RandomLocation reroll button clicked by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 
 	rollInfo, count, cb, err := services.RerollCommon(bot, ctx, constants.LOCATION)
 	if err != nil {

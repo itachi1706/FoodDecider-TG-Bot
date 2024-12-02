@@ -86,6 +86,7 @@ func sendWithRerollButtonGeneral(rollInfo model.Rolls, trigger *gotgbot.Sender, 
 
 func RandomFoodCommandReroll(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("RandomFood reroll button clicked by " + ctx.EffectiveSender.Username())
+	services.RunPreCommandScriptCustomType(ctx, constants.CALLBACK)
 	rollInfo, count, cb, err := services.RerollCommon(bot, ctx, constants.GENERAL)
 	if err != nil {
 		return err

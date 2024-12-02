@@ -3,6 +3,7 @@ package utils
 import (
 	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/model"
+	"FoodDecider-TG-Bot/repository"
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -72,9 +73,12 @@ func GenerateRerollKeys(cmdType constants.DecisionType, rollData model.Rolls, ha
 
 	if rollData.DecidedLocationID != nil {
 		// View location button
+		db := GetDbConnection()
+		foodRepo := repository.NewFoodsRepository(db)
+		locationData := foodRepo.FindActiveLocationById(*rollData.DecidedLocationID)
 		row = append(row, gotgbot.InlineKeyboardButton{
-			Text:         "View Location 📍",
-			CallbackData: fmt.Sprintf("view-location-%s", rollData.DecidedLocationID.String()),
+			Text: "View Location 📍",
+			Url:  "https://www.google.com/maps/search/" + fmt.Sprintf("%f,%f", locationData.Latitude, locationData.Longitude),
 		})
 	}
 
