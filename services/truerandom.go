@@ -25,6 +25,11 @@ func GetTrueRandomNumber(min, max int64) (int, error) {
 		return 0, fmt.Errorf("min must be less than or equal to max")
 	}
 
+	if (min == 0) && (max == 0) {
+		log.Println("min and max must not be both 0")
+		return 0, fmt.Errorf("min and max must not be both 0")
+	}
+
 	if min == max {
 		return int(min), nil
 	}
