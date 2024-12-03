@@ -83,6 +83,20 @@ func InitCommands(dispatcher *ext.Dispatcher) {
 		}))
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("reroll-GROUP"), commands.RandomGroupsCommandReroll))
 
+	// Random location
+	dispatcher.AddHandler(handlers.NewConversation(
+		[]ext.Handler{handlers.NewCommand("randomlocation", commands.RandomLocationCommand),
+			handlers.NewCommand("randomnearme", commands.RandomLocationCommand)},
+		map[string][]ext.Handler{
+			commands.SelectLocationRandom: {handlers.NewMessage(locationPin, commands.RandomLocationCommandLocationPin)},
+		},
+		&handlers.ConversationOpts{
+			Exits:        []ext.Handler{handlers.NewCommand("cancel", commands.CancelCommand)},
+			StateStorage: conversation.NewInMemoryStorage(conversation.KeyStrategySenderAndChat),
+			AllowReEntry: true,
+		}))
+	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("reroll-LOCATION"), commands.RandomLocationCommandReroll))
+
 	log.Println("Commands initialized")
 }
 

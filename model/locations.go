@@ -19,3 +19,8 @@ type Locations struct {
 	PlusCode  string    `gorm:"column:plus_code"`
 	Address   string    `gorm:"column:address"`
 }
+
+type LocationDistance struct {
+	Location Locations
+	Distance float64
+}
