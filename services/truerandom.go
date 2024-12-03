@@ -15,6 +15,20 @@ type RandomOrgResponse struct {
 }
 
 func GetTrueRandomNumber(min, max int64) (int, error) {
+	if (min < 0) || (max < 0) {
+		log.Println("min and max must be positive")
+		return 0, fmt.Errorf("min and max must be positive")
+	}
+
+	if min > max {
+		log.Println("min must be less than or equal to max")
+		return 0, fmt.Errorf("min must be less than or equal to max")
+	}
+
+	if min == max {
+		return int(min), nil
+	}
+
 	url := fmt.Sprintf("https://www.random.org/integers/?num=1&min=%d&max=%d&col=1&base=10&format=plain&rnd=new", min, max)
 	resp, err := http.Get(url)
 	if err != nil {
