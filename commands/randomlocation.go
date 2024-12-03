@@ -135,7 +135,7 @@ func sendWithRerollButtonLocation(rollInfo model.Rolls, trigger *gotgbot.Sender,
 	messageFmt := "Food Decision made 🎉\n\n"
 	messageFmt += "Selected food: %s\n"
 	messageFmt += "Description: %s\n"
-	messageFmt += "Location: %f,%f\n\n"
+	messageFmt += "Location: %s (%s)\n\n"
 	messageFmt += "This was randomized from a list of %d food options with the following coordinates:\n(%f,%f)\n\n"
 	if reroll {
 		messageFmt += "Decision was re-ran on %s by %s (%s)"
@@ -143,11 +143,23 @@ func sendWithRerollButtonLocation(rollInfo model.Rolls, trigger *gotgbot.Sender,
 		messageFmt += "Decision was ran on %s by %s (%s)"
 	}
 
+	fmt.Printf("%#v\n", loc)
+
+	finalLoc := loc.Address
+	if loc.Address == "" {
+		finalLoc = fmt.Sprintf("%f, %f", loc.Latitude, loc.Longitude)
+	}
+
+	plusCode := loc.PlusCode
+	if loc.PlusCode == "" {
+		plusCode = "No Plus Code"
+	}
+
 	updatedTime := rollInfo.UpdatedAt
 	// Format the time to be more readable
 	updatedTimeStr := updatedTime.Format(constants.DateTimeFormat)
 
-	message := fmt.Sprintf(messageFmt, food.Name, food.Description, loc.Latitude, loc.Longitude, count, location.Latitude, location.Longitude, updatedTimeStr, trigger.Name(), trigger.Username())
+	message := fmt.Sprintf(messageFmt, food.Name, food.Description, finalLoc, plusCode, count, location.Latitude, location.Longitude, updatedTimeStr, trigger.Name(), trigger.Username())
 
 	return message
 }

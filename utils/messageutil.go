@@ -76,9 +76,15 @@ func GenerateRerollKeys(cmdType constants.DecisionType, rollData model.Rolls, ha
 		db := GetDbConnection()
 		foodRepo := repository.NewFoodsRepository(db)
 		locationData := foodRepo.FindActiveLocationById(*rollData.DecidedLocationID)
+
+		locationCoordinate := fmt.Sprintf("%f,%f", locationData.Latitude, locationData.Longitude)
+		if locationData.Address != "" {
+			locationCoordinate = locationData.Address
+		}
+
 		row = append(row, gotgbot.InlineKeyboardButton{
 			Text: "View Location 📍",
-			Url:  "https://www.google.com/maps/search/" + fmt.Sprintf("%f,%f", locationData.Latitude, locationData.Longitude),
+			Url:  "https://www.google.com/maps/search/" + locationCoordinate,
 		})
 	}
 
