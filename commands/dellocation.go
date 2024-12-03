@@ -12,8 +12,8 @@ import (
 	"strings"
 )
 
-func DelCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
-	log.Println("DelCoordinate command called by " + ctx.EffectiveSender.Username())
+func DelLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
+	log.Println("DelLocation command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
 
 	userId := ctx.EffectiveSender.Id()
@@ -25,7 +25,7 @@ func DelCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	messageOpts := utils.GetArgumentsFromMessage(ctx)
 	log.Printf("Message options: %v\n", messageOpts)
 	if len(messageOpts) < 1 {
-		return utils.BasicReplyToUser(bot, ctx, "Invalid Format\n\nFormat: /delcoordinate <location id>")
+		return utils.BasicReplyToUser(bot, ctx, "Invalid Format\n\nFormat: /dellocation <location id>")
 	}
 
 	locationId, err := uuid.Parse(messageOpts[0])
@@ -42,7 +42,7 @@ func DelCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	message := constants.ErrorMessage
 	if location == nil {
 		// New Food
-		message = "Location ID " + locationId.String() + " does not exist\n\nUse /listcoordinates <food id> to get the location ID to delete"
+		message = "Location ID " + locationId.String() + " does not exist\n\nUse /listlocations <food id> to get the location ID to delete"
 	} else {
 		log.Println("Deleting location " + locationId.String())
 		location.Status = "D"
