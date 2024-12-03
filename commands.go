@@ -46,11 +46,11 @@ func InitCommands(dispatcher *ext.Dispatcher) {
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-group-list"), commands.ListGroupsCommandNext))
 
 	dispatcher.AddHandler(handlers.NewCommand("addcoordinate", commands.AddCoordinateCommand))
-	dispatcher.AddHandler(handlers.NewCommand("delcoordinate", commands.DelCoordinateCommand))
-	dispatcher.AddHandler(handlers.NewCommand("listcoordinates", commands.ListCoordinatesCommand))
-	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("list-coordinates"), commands.ListCoordinatesCommandTrigger))
-	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-coordinate-list"), commands.ListCoordinatesCommandPrev))
-	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-coordinate-list"), commands.ListCoordinatesCommandNext))
+	dispatcher.AddHandler(handlers.NewCommand("dellocation", commands.DelLocationCommand))
+	dispatcher.AddHandler(handlers.NewCommand("listlocations", commands.ListLocationsCommand))
+	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("list-coordinates"), commands.ListLocationsCommandTrigger))
+	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("previous-coordinate-list"), commands.ListLocationsCommandPrev))
+	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-coordinate-list"), commands.ListLocationsCommandNext))
 	dispatcher.AddHandler(handlers.NewConversation(
 		[]ext.Handler{handlers.NewCommand("addlocation", commands.AddLocationCommand)},
 		map[string][]ext.Handler{
