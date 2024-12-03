@@ -10,32 +10,28 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/google/uuid"
 	"log"
-	"strconv"
 	"strings"
 )
 
-func AddCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
-	log.Println("AddCoordinate command called by " + ctx.EffectiveSender.Username())
+func AddPlusCodeCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
+	log.Println("AddPlusCode command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
 
-	userId, foodId, messageOpts, err := services.FoodValidationParameterChecksAdmin(bot, ctx, 3, "Invalid format\n\nFormat: /addcoordinate <food id> <latitude> <longitude> [name]")
+	userId, foodId, messageOpts, err := services.FoodValidationParameterChecksAdmin(bot, ctx, 2, "Invalid format\n\nFormat: /addpluscode <food id> <plus code>")
 	if err != nil {
 		return err
 	}
 
-	latitude, err1 := strconv.ParseFloat(messageOpts[1], 64)
-	longitude, err2 := strconv.ParseFloat(messageOpts[2], 64)
-	if err1 != nil || err2 != nil {
-		return utils.BasicReplyToUser(bot, ctx, "Invalid latitude or longitude provided")
-	}
+	plusCode := strings.Join(messageOpts[1:], " ")
 
-	// Ensure latitude and longitude within range
-	if latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180 {
-		return utils.BasicReplyToUser(bot, ctx, "Invalid latitude or longitude provided. Out of range")
-	}
-
-	// Use geocoding api
+	// Use geocoding api to reverse geocode and then geocode again
 	geocodingAPI := services.NewGeocodingAPI()
+	latitude, longitude, err := geocodingAPI.GetLocationFromPlusCode(plusCode)
+	if err != nil {
+		log.Println("Failed to get location from plus code: " + err.Error())
+		return utils.BasicReplyToUser(bot, ctx, "Failed to get location from plus code. Please check you have a valid plus code")
+	}
+
 	address, err := geocodingAPI.GetAddressFromLocation(latitude, longitude)
 	if err != nil {
 		log.Println("Failed to get address from location: " + err.Error())
@@ -47,7 +43,7 @@ func AddCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 		// Has friendly name
 		friendlyName = strings.Trim(strings.Join(messageOpts[3:], " "), " ")
 	}
-	log.Printf("Food ID: %v, Latitude: %v, Longitude: %v, Name: %v\n", foodId, latitude, longitude, friendlyName)
+	log.Printf("Food ID: %v, Latitude: %v, Longitude: %v, Name: %v, Plus Code: %v\n", foodId, latitude, longitude, friendlyName, plusCode)
 	db := utils.GetDbConnection()
 	repo := repository.NewFoodsRepository(db)
 	location := repo.GetFoodLocation(*foodId, latitude, longitude)

@@ -29,7 +29,7 @@ func AdminHelpCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	message += "***Food Management***\n"
 	message += "/addfood <name> - Add a food to a group\n"
-	message += "/updatefood <food id> <name/description> <value> - Update a food in a group\n"
+	message += "/updatefood <food id> <name/description> <value> - Update a food info\n"
 	message += "/delfood <food id> - Delete a food from a group\n\n"
 
 	message += "***Group Management***\n"
@@ -38,9 +38,11 @@ func AdminHelpCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	message += "/removegroup <food id> <group name> - Remove a group\n\n"
 
 	message += "***Location Management***\n"
-	message += "/addcoordinate <food id> <latitude> <longitude> - Add a coordinate to a group\n"
-	message += "/addlocation <food id> <name> - Add a location to a group\n"
-	message += "/dellocation <location id> - Delete a coordinate from a group"
+	message += "/addcoordinate <food id> <latitude> <longitude> [name] - Add a coordinate to a food\n"
+	message += "/addpluscode <food id> <plus code> - Add a plus code to a food\n"
+	message += "/addlocation <food id> <name> - Add a location to a food\n"
+	message += "/updatelocation name <location id> <name> - Update location name"
+	message += "/dellocation <location id> - Delete a coordinate from a food"
 
 	return utils.BasicReplyToUserWithMarkdown(bot, ctx, message)
 }

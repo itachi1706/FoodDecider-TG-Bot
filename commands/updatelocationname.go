@@ -9,10 +9,11 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/google/uuid"
 	"log"
+	"strings"
 )
 
-func DelLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
-	log.Println("DelLocation command called by " + ctx.EffectiveSender.Username())
+func UpdateLocationNameCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
+	log.Println("UpdateLocationName command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
 
 	userId := ctx.EffectiveSender.Id()
@@ -23,14 +24,16 @@ func DelLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	messageOpts := utils.GetArgumentsFromMessage(ctx)
 	log.Printf("Message options: %v\n", messageOpts)
-	if len(messageOpts) < 1 {
-		return utils.BasicReplyToUser(bot, ctx, "Invalid Format\n\nFormat: /dellocation <location id>")
+	if len(messageOpts) < 2 {
+		return utils.BasicReplyToUser(bot, ctx, "Invalid Format\n\nFormat: /updatelocationname <location id> <name>")
 	}
 
 	locationId, err := uuid.Parse(messageOpts[0])
 	if err != nil {
 		return utils.BasicReplyToUser(bot, ctx, "Invalid location id provided")
 	}
+
+	newName := strings.Trim(strings.Join(messageOpts[1:], " "), " ")
 
 	db := utils.GetDbConnection()
 	repo := repository.NewFoodsRepository(db)
@@ -41,10 +44,11 @@ func DelLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 		// New Food
 		message = "Location ID " + locationId.String() + " does not exist\n\nUse /listlocations <food id> to get the location ID to delete"
 	} else {
-		log.Println("Deleting location " + locationId.String())
-		location.Status = "D"
+		log.Println("Updating location name " + locationId.String())
+		location.UpdatedBy = userId
+		location.Name = newName
 		db.Save(location)
-		message = "Location ID " + locationId.String() + " deleted"
+		message = "Location ID " + locationId.String() + "'s name updated"
 	}
 
 	return utils.BasicReplyToUser(bot, ctx, message)
