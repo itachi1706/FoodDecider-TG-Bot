@@ -209,3 +209,19 @@ func AddLocationIfExist(foodId uuid.UUID, latitude float64, longitude float64, f
 
 	return message
 }
+
+func ParseLocationInformation(location *model.Locations) (string, string) {
+	finalLoc := location.Address
+	if location.Address == "" {
+		finalLoc = fmt.Sprintf("%f, %f", location.Latitude, location.Longitude)
+	}
+	if location.PlusCode != "" {
+		finalLoc += " " + location.PlusCode
+	}
+	locName := location.Name
+	if location.Name == "" {
+		locName = "No Name"
+	}
+
+	return locName, finalLoc
+}
