@@ -100,6 +100,8 @@ func InitCommands(dispatcher *ext.Dispatcher) {
 		}))
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("reroll-LOCATION"), commands.RandomLocationCommandReroll))
 
+	dispatcher.AddHandler(handlers.NewCommand("search", commands.SearchCommand))
+
 	log.Println("Commands initialized")
 }
 

@@ -34,6 +34,13 @@ func (f FoodRepository) FindFoodByNameAll(name string) *model.Food {
 	return &food
 }
 
+func (f FoodRepository) FindAllActiveFoodBySearchTerm(searchTerm string) []model.Food {
+	var foods []model.Food
+	f.db.Where("name LIKE ? AND status = ?", "%"+searchTerm+"%", "A").Find(&foods)
+
+	return foods
+}
+
 func (f FoodRepository) FindAllActiveFoodPaginated(size int, offset int) []model.Food {
 	var foods []model.Food
 	f.db.Where(&model.Food{Status: "A"}).Limit(size).Offset(offset * size).Find(&foods)
