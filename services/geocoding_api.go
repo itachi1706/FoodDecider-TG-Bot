@@ -9,7 +9,7 @@ import (
 )
 
 type GeocodingAPI interface {
-	GetLocationFromPlaceID(placeID string) (float64, float64, error)
+	GetLocationFromPlusCode(plusCode string) (float64, float64, error)
 	GetAddressFromLocation(latitude, longitude float64) (*maps.GeocodingResult, error)
 }
 
@@ -26,16 +26,16 @@ func NewGeocodingAPI() GeocodingAPI {
 	return &GeocodingAPIImpl{client: c}
 }
 
-func (g *GeocodingAPIImpl) GetLocationFromPlaceID(placeID string) (float64, float64, error) {
-	log.Println("Getting Location from Place ID: " + placeID)
+func (g *GeocodingAPIImpl) GetLocationFromPlusCode(plusCode string) (float64, float64, error) {
+	log.Println("Getting Location from Plus Code: " + plusCode)
 
 	req := &maps.GeocodingRequest{
-		PlaceID: placeID,
+		Address: plusCode,
 	}
 
 	resp, err := g.client.Geocode(context.Background(), req)
 	if err != nil {
-		log.Fatalf("failed to get location from place id: %v", err)
+		log.Fatalf("failed to get location from plus code: %v", err)
 		return 0, 0, err
 	}
 

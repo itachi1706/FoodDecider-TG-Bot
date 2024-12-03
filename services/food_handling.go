@@ -2,6 +2,7 @@ package services
 
 import (
 	"FoodDecider-TG-Bot/constants"
+	"FoodDecider-TG-Bot/model"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/utils"
 	"errors"
@@ -9,6 +10,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/google/uuid"
+	"googlemaps.github.io/maps"
 	"log"
 	"strconv"
 	"strings"
@@ -170,4 +172,40 @@ func FoodValidationParameterChecks(bot *gotgbot.Bot, ctx *ext.Context, argLen in
 	}
 
 	return &userId, &foodId, messageOpts, nil
+}
+
+func AddLocationIfExist(foodId uuid.UUID, latitude float64, longitude float64, friendlyName string, userId int64, address *maps.GeocodingResult) string {
+	db := utils.GetDbConnection()
+	repo := repository.NewFoodsRepository(db)
+	location := repo.GetFoodLocation(foodId, latitude, longitude)
+	message := constants.ErrorMessage
+	if location == nil {
+		// New location
+		log.Println("Creating new location for food " + foodId.String())
+		location = &model.Locations{
+			FoodID:    foodId,
+			Name:      friendlyName,
+			Latitude:  latitude,
+			Longitude: longitude,
+			CreatedBy: userId,
+			UpdatedBy: userId,
+			ID:        uuid.New(),
+			PlusCode:  address.PlusCode.GlobalCode,
+			Address:   address.FormattedAddress,
+		}
+		db.Create(&location)
+		message = "Location added for food " + foodId.String()
+	} else {
+		location.Name = friendlyName
+		location.UpdatedBy = userId
+		message = "Location updated for food " + foodId.String()
+		if location.Status != "A" {
+			log.Println("Reactivating location for food " + foodId.String())
+			location.Status = "A"
+			message = "Location added for food " + foodId.String()
+		}
+		db.Save(&location)
+	}
+
+	return message
 }

@@ -11,7 +11,6 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/conversation"
-	"github.com/google/uuid"
 	"log"
 	"strings"
 )
@@ -110,37 +109,7 @@ func AddLocationCommandLocationPin(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	log.Println("Address: " + address.FormattedAddress)
 
-	db := utils.GetDbConnection()
-	repo := repository.NewFoodsRepository(db)
-	location := repo.GetFoodLocation(food.ID, pinLocation.Latitude, pinLocation.Longitude)
-	message := constants.ErrorMessage
-	if location == nil {
-		// New location
-		log.Println("Creating new location for food " + food.ID.String())
-		location = &model.Locations{
-			FoodID:    food.ID,
-			Name:      name,
-			Latitude:  pinLocation.Latitude,
-			Longitude: pinLocation.Longitude,
-			CreatedBy: userId,
-			UpdatedBy: userId,
-			ID:        uuid.New(),
-			PlusCode:  address.PlusCode.GlobalCode,
-			Address:   address.FormattedAddress,
-		}
-		db.Create(&location)
-		message = "Location added for " + food.Name
-	} else {
-		location.Name = name
-		location.UpdatedBy = userId
-		message = "Location updated for " + food.Name
-		if location.Status != "A" {
-			log.Println("Reactivating location for food " + food.ID.String())
-			location.Status = "A"
-			message = "Location added for " + food.Name
-		}
-		db.Save(&location)
-	}
+	message := services.AddLocationIfExist(food.ID, pinLocation.Latitude, pinLocation.Longitude, name, userId, address)
 
 	_ = utils.BasicReplyToUser(bot, ctx, message)
 	return handlers.EndConversation()

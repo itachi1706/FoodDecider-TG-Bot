@@ -47,6 +47,8 @@ func InitCommands(dispatcher *ext.Dispatcher) {
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("next-group-list"), commands.ListGroupsCommandNext))
 
 	dispatcher.AddHandler(handlers.NewCommand("addcoordinate", commands.AddCoordinateCommand))
+	dispatcher.AddHandler(handlers.NewCommand("addpluscode", commands.AddPlusCodeCommand))
+	dispatcher.AddHandler(handlers.NewCommand("updatelocationname", commands.UpdateLocationNameCommand))
 	dispatcher.AddHandler(handlers.NewCommand("dellocation", commands.DelLocationCommand))
 	dispatcher.AddHandler(handlers.NewCommand("listlocations", commands.ListLocationsCommand))
 	dispatcher.AddHandler(handlers.NewCallback(callbackquery.Prefix("list-coordinates"), commands.ListLocationsCommandTrigger))
