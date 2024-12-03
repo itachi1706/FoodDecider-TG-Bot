@@ -67,21 +67,21 @@ func ListCoordinatesCommandTrigger(bot *gotgbot.Bot, ctx *ext.Context) error {
 	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend(CoordinateListGrp+foodId.String()+"+", 0, true, true))
 }
 
-func populateListFoodLocationsMessage(groups []model.Locations, food *model.Food) string {
+func populateListFoodLocationsMessage(locations []model.Locations, food *model.Food) string {
 	foodName := "Unknown Food"
 	if food != nil {
 		foodName = food.Name
 	}
 
 	message := "No locations found for " + foodName
-	if len(groups) > 0 {
+	if len(locations) > 0 {
 		message = "Locations for " + foodName + ":\n\n"
-		for _, group := range groups {
-			name := group.Name
+		for _, location := range locations {
+			name := location.Name
 			if name == "" {
 				name = "No name defined"
 			}
-			message += fmt.Sprintf("ID: %s\nLocation: %v, %v\nName: %s\n\n", group.ID, group.Latitude, group.Longitude, name)
+			message += fmt.Sprintf("ID: %s\nLocation: %v, %v\nName: %s\nAddress: %s\nPlus Code: %s\n\n", location.ID, location.Latitude, location.Longitude, name, location.Address, location.PlusCode)
 		}
 	}
 	return message
