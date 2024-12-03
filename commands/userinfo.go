@@ -44,5 +44,17 @@ func UserInfoCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 		debugText += "\nApp Super Admin: No"
 	}
 
-	return utils.BasicReplyToUserWithMarkdown(bot, ctx, debugText)
+	opts := &gotgbot.SendMessageOpts{ParseMode: "Markdown", ReplyMarkup: &gotgbot.InlineKeyboardMarkup{
+		InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
+			{
+				{
+					Text: "Copy ID to Clipboard",
+					CopyText: &gotgbot.CopyTextButton{
+						Text: strconv.FormatInt(sender.Id(), 10),
+					}},
+			},
+		},
+	}}
+
+	return utils.ReplyUserWithOpts(bot, ctx, debugText, opts)
 }
