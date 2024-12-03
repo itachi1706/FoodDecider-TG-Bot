@@ -1,14 +1,10 @@
 package commands
 
 import (
-	"FoodDecider-TG-Bot/constants"
-	"FoodDecider-TG-Bot/model"
-	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/services"
 	"FoodDecider-TG-Bot/utils"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-	"github.com/google/uuid"
 	"log"
 	"strings"
 )
@@ -44,37 +40,7 @@ func AddPlusCodeCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 		friendlyName = strings.Trim(strings.Join(messageOpts[3:], " "), " ")
 	}
 	log.Printf("Food ID: %v, Latitude: %v, Longitude: %v, Name: %v, Plus Code: %v\n", foodId, latitude, longitude, friendlyName, plusCode)
-	db := utils.GetDbConnection()
-	repo := repository.NewFoodsRepository(db)
-	location := repo.GetFoodLocation(*foodId, latitude, longitude)
-	message := constants.ErrorMessage
-	if location == nil {
-		// New location
-		log.Println("Creating new location for food " + foodId.String())
-		location = &model.Locations{
-			FoodID:    *foodId,
-			Name:      friendlyName,
-			Latitude:  latitude,
-			Longitude: longitude,
-			CreatedBy: *userId,
-			UpdatedBy: *userId,
-			ID:        uuid.New(),
-			PlusCode:  address.PlusCode.GlobalCode,
-			Address:   address.FormattedAddress,
-		}
-		db.Create(&location)
-		message = "Location added for food " + foodId.String()
-	} else {
-		location.Name = friendlyName
-		location.UpdatedBy = *userId
-		message = "Location updated for food " + foodId.String()
-		if location.Status != "A" {
-			log.Println("Reactivating location for food " + foodId.String())
-			location.Status = "A"
-			message = "Location added for food " + foodId.String()
-		}
-		db.Save(&location)
-	}
+	message := services.AddLocationIfExist(*foodId, latitude, longitude, friendlyName, *userId, address)
 
 	return utils.BasicReplyToUser(bot, ctx, message)
 }
