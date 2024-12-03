@@ -22,12 +22,12 @@ func ListFoodsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	repo := repository.NewFoodsRepository(db)
 	// Get first 5 food results with status A
 	foods := repo.FindAllActiveFoodPaginated(5, 0)
-	message := populateListFoodMessage(foods)
+	message := populateListFoodMessage(foods, repo)
 
 	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend(constants.FoodList, 0, true, true))
 }
 
-func populateListFoodMessage(foods []model.Food) string {
+func populateListFoodMessage(foods []model.Food, repo repository.FoodRepository) string {
 	message := "No foods found"
 	if len(foods) > 0 {
 		message = "List of foods:\n\n"
@@ -36,7 +36,12 @@ func populateListFoodMessage(foods []model.Food) string {
 			if desc == "" {
 				desc = "No description provided"
 			}
-			message += fmt.Sprintf("ID: %s\nName: %s\nDescription: %s\n\n", food.ID.String(), food.Name, desc)
+
+			// Get groups and locations
+			groupCnt := repo.GetFoodGroupForFoodCount(food.ID)
+			locCnt := repo.FindAllLocationsForFoodCount(food.ID)
+
+			message += fmt.Sprintf("ID: %s\nName: %s\nDescription: %s\nNumber of Groups: %d\nNumber of locations: %d\n\n", food.ID.String(), food.Name, desc, groupCnt, locCnt)
 		}
 	}
 	return message
@@ -84,7 +89,7 @@ func ListFoodsCommandPrev(bot *gotgbot.Bot, ctx *ext.Context) error {
 	repo := repository.NewFoodsRepository(db)
 	foods := repo.FindAllActiveFoodPaginated(5, pageCnt)
 
-	message := populateListFoodMessage(foods)
+	message := populateListFoodMessage(foods, repo)
 	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit(constants.FoodList, pageCnt, true, true))
 
 	return nil
@@ -142,7 +147,7 @@ func ListFoodsCommandNext(bot *gotgbot.Bot, ctx *ext.Context) error {
 	// Get next 5 food results with status A
 	foods := repo.FindAllActiveFoodPaginated(5, pageCnt)
 
-	message := populateListFoodMessage(foods)
+	message := populateListFoodMessage(foods, repo)
 	_, _, err = cb.Message.EditText(bot, message, utils.GeneratePageKeysEdit(constants.FoodList, pageCnt, true, true))
 
 	return nil
