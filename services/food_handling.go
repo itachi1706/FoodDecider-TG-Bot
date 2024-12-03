@@ -142,13 +142,19 @@ func GroupHandlingParameter(bot *gotgbot.Bot, ctx *ext.Context, format string) (
 	return &userId, &foodId, &groupName, nil
 }
 
-func FoodValidationParameterChecks(bot *gotgbot.Bot, ctx *ext.Context, argLen int, errorMsg string) (*int64, *uuid.UUID, []string, error) {
+func FoodValidationParameterChecksAdmin(bot *gotgbot.Bot, ctx *ext.Context, argLen int, errorMsg string) (*int64, *uuid.UUID, []string, error) {
 	userId := ctx.EffectiveSender.Id()
 	// Make sure guy is an admin to run
 	if utils.CheckIfAdmin(userId) == false {
 		_ = utils.BasicReplyToUser(bot, ctx, "This command can only be ran by an administrator")
 		return nil, nil, nil, errors.New("not an admin")
 	}
+
+	return FoodValidationParameterChecks(bot, ctx, argLen, errorMsg)
+}
+
+func FoodValidationParameterChecks(bot *gotgbot.Bot, ctx *ext.Context, argLen int, errorMsg string) (*int64, *uuid.UUID, []string, error) {
+	userId := ctx.EffectiveSender.Id()
 
 	messageOpts := utils.GetArgumentsFromMessage(ctx)
 	log.Printf("Message options: %v\n", messageOpts)

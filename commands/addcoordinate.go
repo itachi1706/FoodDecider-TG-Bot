@@ -18,7 +18,7 @@ func AddCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddCoordinate command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
 
-	userId, foodId, messageOpts, err := services.FoodValidationParameterChecks(bot, ctx, 3, "Invalid update food format\n\nFormat: /addcoordinate <food id> <latitude> <longitude>")
+	userId, foodId, messageOpts, err := services.FoodValidationParameterChecksAdmin(bot, ctx, 3, "Invalid update food format\n\nFormat: /addcoordinate <food id> <latitude> <longitude>")
 	if err != nil {
 		return err
 	}

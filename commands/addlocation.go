@@ -24,7 +24,7 @@ func AddLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddLocation command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
 
-	_, foodId, messageOpts, err := services.FoodValidationParameterChecks(bot, ctx, 1, "Invalid Format\n\nFormat: /addlocation <food id> [name]")
+	_, foodId, messageOpts, err := services.FoodValidationParameterChecksAdmin(bot, ctx, 1, "Invalid Format\n\nFormat: /addlocation <food id> [name]")
 	if err != nil {
 		return err
 	}

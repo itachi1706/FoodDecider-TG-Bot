@@ -15,7 +15,7 @@ func UpdateFoodCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("UpdateFood command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
 
-	userId, foodId, messageOpts, err := services.FoodValidationParameterChecks(bot, ctx, 3, "Invalid update food format\n\nFormat: /updatefood <id> <name/description> [value]")
+	userId, foodId, messageOpts, err := services.FoodValidationParameterChecksAdmin(bot, ctx, 3, "Invalid update food format\n\nFormat: /updatefood <id> <name/description> [value]")
 	if err != nil {
 		return err
 	}

@@ -17,22 +17,16 @@ func ListGroupsCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("ListGroups command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
 
-	messageOpts := utils.GetArgumentsFromMessage(ctx)
-	log.Printf("Message options: %v\n", messageOpts)
-	if len(messageOpts) < 1 {
-		return utils.BasicReplyToUser(bot, ctx, "Food ID required\n\nFormat: /listgroups <food id>")
-	}
-
-	foodId, err := uuid.Parse(messageOpts[0])
+	_, foodId, _, err := services.FoodValidationParameterChecks(bot, ctx, 1, "Food ID required\n\nFormat: /listgroups <food id>")
 	if err != nil {
-		return utils.BasicReplyToUser(bot, ctx, "Invalid food id provided")
+		return err
 	}
 
 	db := utils.GetDbConnection()
 	repo := repository.NewFoodsRepository(db)
 	// Get first 5 food results with status A
-	foodGroups := repo.FindAllGroupsForFoodPaginated(foodId, 5, 0)
-	food := repo.FindFoodById(foodId)
+	foodGroups := repo.FindAllGroupsForFoodPaginated(*foodId, 5, 0)
+	food := repo.FindFoodById(*foodId)
 	message := populateListFoodGroupsMessage(foodGroups, food)
 
 	return utils.ReplyUserWithOpts(bot, ctx, message, utils.GeneratePageKeysSend("group-list+"+foodId.String()+"+", 0, true, true))
