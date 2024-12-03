@@ -35,7 +35,7 @@ func (g *GeocodingAPIImpl) GetLocationFromPlusCode(plusCode string) (float64, fl
 
 	resp, err := g.client.Geocode(context.Background(), req)
 	if err != nil {
-		log.Fatalf("failed to get location from plus code: %v", err)
+		log.Printf("failed to get location from plus code: %v", err)
 		return 0, 0, err
 	}
 
@@ -62,7 +62,7 @@ func (g *GeocodingAPIImpl) GetAddressFromLocation(latitude, longitude float64) (
 
 	resp, err := g.client.ReverseGeocode(context.Background(), req)
 	if err != nil {
-		log.Fatalf("failed to get address from location: %v", err)
+		log.Printf("failed to get address from location: %v", err)
 		return nil, err
 	}
 
