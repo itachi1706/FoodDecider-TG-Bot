@@ -1,0 +1,4 @@
+INTERNAL USE ONLY
+External users may not find this bot useful. You have been warned.
+
+Bot is mainly used for deciding from a list of food options when people does not know what they want to eat or have too many options to choose from. It is a way to deconflict food decisions as well
