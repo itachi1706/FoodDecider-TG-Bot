@@ -18,7 +18,7 @@ func AddCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddCoordinate command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
 
-	userId, foodId, messageOpts, err := services.FoodValidationParameterChecks(bot, ctx, 3, "Invalid update food format\n\nFormat: /updatefood <id> <name/description> [value]")
+	userId, foodId, messageOpts, err := services.FoodValidationParameterChecks(bot, ctx, 3, "Invalid update food format\n\nFormat: /addcoordinate <food id> <latitude> <longitude>")
 	if err != nil {
 		return err
 	}
@@ -32,6 +32,14 @@ func AddCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	// Ensure latitude and longitude within range
 	if latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180 {
 		return utils.BasicReplyToUser(bot, ctx, "Invalid latitude or longitude provided. Out of range")
+	}
+
+	// Use geocoding api
+	geocodingAPI := services.NewGeocodingAPI()
+	address, err := geocodingAPI.GetAddressFromLocation(latitude, longitude)
+	if err != nil {
+		log.Println("Failed to get address from location: " + err.Error())
+		return utils.BasicReplyToUser(bot, ctx, "Failed to get address from location")
 	}
 
 	var friendlyName string
@@ -55,6 +63,8 @@ func AddCoordinateCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 			CreatedBy: *userId,
 			UpdatedBy: *userId,
 			ID:        uuid.New(),
+			PlusCode:  address.PlusCode.GlobalCode,
+			Address:   address.FormattedAddress,
 		}
 		db.Create(&location)
 		message = "Location added for food " + foodId.String()

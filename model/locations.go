@@ -16,4 +16,6 @@ type Locations struct {
 	CreatedBy int64     `gorm:"column:created_by;NOT NULL"`
 	UpdatedBy int64     `gorm:"column:updated_by"`
 	Status    string    `gorm:"column:status;default:A"`
+	PlusCode  string    `gorm:"column:plus_code"`
+	Address   string    `gorm:"column:address"`
 }

@@ -4,6 +4,7 @@ import (
 	"FoodDecider-TG-Bot/constants"
 	"FoodDecider-TG-Bot/repository"
 	"FoodDecider-TG-Bot/utils"
+	"errors"
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -145,18 +146,21 @@ func FoodValidationParameterChecks(bot *gotgbot.Bot, ctx *ext.Context, argLen in
 	userId := ctx.EffectiveSender.Id()
 	// Make sure guy is an admin to run
 	if utils.CheckIfAdmin(userId) == false {
-		return nil, nil, nil, utils.BasicReplyToUser(bot, ctx, "This command can only be ran by an administrator")
+		_ = utils.BasicReplyToUser(bot, ctx, "This command can only be ran by an administrator")
+		return nil, nil, nil, errors.New("not an admin")
 	}
 
 	messageOpts := utils.GetArgumentsFromMessage(ctx)
 	log.Printf("Message options: %v\n", messageOpts)
 	if len(messageOpts) < argLen {
-		return nil, nil, messageOpts, utils.BasicReplyToUser(bot, ctx, errorMsg)
+		_ = utils.BasicReplyToUser(bot, ctx, errorMsg)
+		return nil, nil, messageOpts, errors.New("invalid format")
 	}
 
 	foodId, err := uuid.Parse(messageOpts[0])
 	if err != nil {
-		return nil, nil, messageOpts, utils.BasicReplyToUser(bot, ctx, "Invalid food id provided")
+		_ = utils.BasicReplyToUser(bot, ctx, "Invalid food id provided")
+		return nil, nil, messageOpts, errors.New("invalid food id provided")
 	}
 
 	return &userId, &foodId, messageOpts, nil

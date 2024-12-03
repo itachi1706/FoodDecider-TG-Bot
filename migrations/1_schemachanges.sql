@@ -1,0 +1,2 @@
+ALTER TABLE locations ADD COLUMN plus_code VARCHAR(255);
+ALTER TABLE locations ADD COLUMN address TEXT;

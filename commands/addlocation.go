@@ -24,10 +24,11 @@ func AddLocationCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	log.Println("AddLocation command called by " + ctx.EffectiveSender.Username())
 	services.RunPreCommandScripts(ctx)
 
-	_, foodId, messageOpts, err := services.FoodValidationParameterChecks(bot, ctx, 1, "Invalid Format\n\nFormat: /addcoordinate <food id> [name]")
+	_, foodId, messageOpts, err := services.FoodValidationParameterChecks(bot, ctx, 1, "Invalid Format\n\nFormat: /addlocation <food id> [name]")
 	if err != nil {
 		return err
 	}
+	log.Println("Why continue?")
 
 	var friendlyName string
 	if len(messageOpts) > 1 {
@@ -99,6 +100,16 @@ func AddLocationCommandLocationPin(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	log.Printf("Food ID: %v, Latitude: %v, Longitude: %v, Name: %v\n", food.ID, pinLocation.Latitude, pinLocation.Longitude, name)
 
+	// Use geocoding api
+	geocodingAPI := services.NewGeocodingAPI()
+	address, err := geocodingAPI.GetAddressFromLocation(pinLocation.Latitude, pinLocation.Longitude)
+	if err != nil {
+		log.Println("Failed to get address from location: " + err.Error())
+		return utils.BasicReplyToUser(bot, ctx, "Failed to get address from location")
+	}
+
+	log.Println("Address: " + address.FormattedAddress)
+
 	db := utils.GetDbConnection()
 	repo := repository.NewFoodsRepository(db)
 	location := repo.GetFoodLocation(food.ID, pinLocation.Latitude, pinLocation.Longitude)
@@ -114,6 +125,8 @@ func AddLocationCommandLocationPin(bot *gotgbot.Bot, ctx *ext.Context) error {
 			CreatedBy: userId,
 			UpdatedBy: userId,
 			ID:        uuid.New(),
+			PlusCode:  address.PlusCode.GlobalCode,
+			Address:   address.FormattedAddress,
 		}
 		db.Create(&location)
 		message = "Location added for " + food.Name

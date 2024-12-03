@@ -31,7 +31,7 @@ func RenameGroupCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	messageOpts := utils.GetArgumentsFromMessage(ctx)
 	log.Printf("Message options: %v\n", messageOpts)
 	if len(messageOpts) < 1 {
-		return utils.BasicReplyToUser(bot, ctx, "Please enter old group name\n\nFormat: /updatefood <group name>")
+		return utils.BasicReplyToUser(bot, ctx, "Please enter old group name\n\nFormat: /renamegroup <group name>")
 	}
 
 	groupName := strings.Trim(strings.Join(messageOpts[0:], " "), " ")
