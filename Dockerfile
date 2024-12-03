@@ -8,6 +8,8 @@ RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" && \
 ADD /outfile/${TARGETPLATFORM}/FoodDecider-TG-Bot /FoodDecider-TG-Bot
 
 WORKDIR /
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
 RUN chmod +x FoodDecider-TG-Bot
