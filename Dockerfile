@@ -1,14 +1,14 @@
-FROM alpine:latest
+FROM alpine:3.20
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
-RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
-
-RUN apk add --no-cache libc6-compat gcompat
+RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" && \
+    apk add --no-cache libc6-compat gcompat
 
 ADD /outfile/${TARGETPLATFORM}/FoodDecider-TG-Bot /FoodDecider-TG-Bot
 
 WORKDIR /
+USER appuser
 
 RUN chmod +x FoodDecider-TG-Bot
 

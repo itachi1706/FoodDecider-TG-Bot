@@ -15,6 +15,7 @@ spec:
       labels:
         app: tg-bot-food-decider
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: tg-bot-food-decider
           image: itachi1706/personal-docker-images:tg-bot-food-decider
@@ -26,6 +27,7 @@ spec:
             requests:
               memory: 10Mi
               cpu: 10m
+              ephemeral-storage: 30Mi
             limits:
               memory: 256Mi
               cpu: 100m
