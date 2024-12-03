@@ -9,9 +9,7 @@ ADD /outfile/${TARGETPLATFORM}/FoodDecider-TG-Bot /FoodDecider-TG-Bot
 
 WORKDIR /
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup && chmod +x FoodDecider-TG-Bot
 USER appuser
-
-RUN chmod +x FoodDecider-TG-Bot
 
 CMD ["./FoodDecider-TG-Bot"]
