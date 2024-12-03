@@ -36,7 +36,7 @@ func populateListDecisionsMessage(decisions []model.Rolls, db *gorm.DB) string {
 	for _, decision := range decisions {
 		msgFmt := "Decision ID: %s\nDecision: %s\n"
 		if decision.DecidedLocationID != nil {
-			msgFmt += "Location: %s (%f,%f)\n"
+			msgFmt += "Location: %s (%s)\n"
 		}
 		msgFmt += "Requested Location: %s\nRequested Group Name: %s\n"
 		msgFmt += "Requestor: %s (%s)\nDate: %s\n\n"
@@ -58,7 +58,8 @@ func populateListDecisionsMessage(decisions []model.Rolls, db *gorm.DB) string {
 		updatedAt := decision.UpdatedAt.Format(constants.DateTimeFormat)
 		if decision.DecidedLocationID != nil {
 			location := foodRepo.FindActiveLocationById(*decision.DecidedLocationID)
-			message += fmt.Sprintf(msgFmt, decision.ID.String(), food.Name, location.Name, location.Latitude, location.Longitude, reqLocation, reqGroup, user.FullName, user.Username, updatedAt)
+			locName, finalLoc := services.ParseLocationInformation(location)
+			message += fmt.Sprintf(msgFmt, decision.ID.String(), food.Name, locName, finalLoc, reqLocation, reqGroup, user.FullName, user.Username, updatedAt)
 		} else {
 			message += fmt.Sprintf(msgFmt, decision.ID.String(), food.Name, reqLocation, reqGroup, user.FullName, user.Username, updatedAt)
 		}

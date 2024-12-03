@@ -21,6 +21,7 @@ func AdminHelpCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	message := ""
 	message += "***General Commands***\n"
 	message += "/adminhelp - Show this message\n\n"
+	message += "/debuginfo - Shows debugging information\n\n"
 
 	message += "***Admin Management***\n"
 	message += "/addadmin <telegram id> <nickname> - Add an admin\n"

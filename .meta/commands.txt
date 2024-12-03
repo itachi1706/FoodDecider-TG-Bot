@@ -1,0 +1,15 @@
+start - Start command
+adminhelp - (ADMIN ONLY) Shows administrative commands
+userinfo - Views user information
+listfoods - List all food options
+listgroups - <food id> List all groups for a food
+listlocations - <food id> List all locations for a food
+randomfood - Randomly selects a food option from the entire list
+randomgroups - [group name] Randomly selects a food option from 1 or more food groupings
+randomlocation - Randomly selects a food option from a provided location
+randomnearme - Randomly selects a food option near the requestor
+cancel - Cancels the current operation (if any)
+search - <search term> Searches for a food option
+lastdecision - Views the last decision made in this chat
+decisionhistory - Views the decision history for this chat
+rollhistory - <decision id> Views the roll history for a specific food decision

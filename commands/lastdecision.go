@@ -39,13 +39,14 @@ func LastDecisionCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	messageFmt := "Last Decision Made: %s\n"
 	if location != nil {
-		messageFmt += "Location: %s (%f,%f)\n"
+		messageFmt += "Location: %s (%s)\n"
 	}
 	messageFmt += "\nRequested by: %s (%s) on %s\nDecision ID: %s"
 
 	var message string
 	if location != nil {
-		message = fmt.Sprintf(messageFmt, food.Name, location.Name, location.Latitude, location.Latitude, user.FullName, user.Username, lastRoll.UpdatedAt.Format(constants.DateTimeFormat), lastRoll.ID)
+		locName, finalLoc := services.ParseLocationInformation(location)
+		message = fmt.Sprintf(messageFmt, food.Name, locName, finalLoc, user.FullName, user.Username, lastRoll.UpdatedAt.Format(constants.DateTimeFormat), lastRoll.ID)
 	} else {
 		message = fmt.Sprintf(messageFmt, food.Name, user.FullName, user.Username, lastRoll.UpdatedAt.Format(constants.DateTimeFormat), lastRoll.ID)
 	}
