@@ -2,6 +2,7 @@
 import React, {useState, useEffect} from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import {authCheck} from "@/utils/authentication";
 
 export default function DefaultLayout({
   children,
@@ -12,34 +13,14 @@ export default function DefaultLayout({
 
   const [authenticated, setAuthenticated] = useState(false);
 
-  const authCheck = async () => {
-    const authData = localStorage.getItem("authData");
-
-    if (authData) {
-      console.log(authData);
-      const result = await fetch("/api/auth/validate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: authData,
-      });
-
-      if (result.status === 200) {
-        setAuthenticated(true);
-      }
-
-    }
-  }
-
   // Set refreshAuth
   const refreshAuth = async () => {
-    authCheck().catch(console.error);
+    authCheck().then(logged => setAuthenticated(logged)).catch(console.error);
   }
 
   // Check if user is authenticated
   useEffect(() => {
-    authCheck().catch(console.error);
+    authCheck().then(logged => setAuthenticated(logged)).catch(console.error);
   });
 
 

@@ -7,59 +7,36 @@ import TableOne from "../Tables/TableOne";
 import MapOne from "../Maps/MapOne";
 import DataStatsOne from "@/components/DataStats/DataStatsOne";
 import ChartOne from "@/components/Charts/ChartOne";
+import {authCheck} from "@/utils/authentication";
 
 const ECommerce: React.FC = () => {
 
     const [authenticated, setAuthenticated] = useState(false);
 
-    const authCheck = async () => {
-        const authData = localStorage.getItem("authData");
-
-        if (authData) {
-            console.log(authData);
-            const result = await fetch("/api/auth/validate", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: authData,
-            });
-
-            if (result.status === 200) {
-                setAuthenticated(true);
-            }
-
-        }
-    }
-
     // Check if user is authenticated
     useEffect(() => {
-        authCheck().catch(console.error);
+        authCheck().then(logged => setAuthenticated(logged)).catch(console.error);
     });
 
     if (!authenticated) {
-        return (
-            <>
-            </>
-        )
+        return (<></>)
     }
 
-  return (
-    <>
-      <DataStatsOne />
-
-      <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-9 2xl:gap-7.5">
-        <ChartOne />
-        <ChartTwo />
-        <ChartThree />
-        <MapOne />
-        <div className="col-span-12 xl:col-span-8">
-          <TableOne />
-        </div>
-        <ChatCard />
-      </div>
-    </>
-  );
+    return (
+        <>
+            <DataStatsOne/>
+            <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-9 2xl:gap-7.5">
+                <ChartOne/>
+                <ChartTwo/>
+                <ChartThree/>
+                <MapOne/>
+                <div className="col-span-12 xl:col-span-8">
+                    <TableOne/>
+                </div>
+                <ChatCard/>
+            </div>
+        </>
+    );
 };
 
 export default ECommerce;
