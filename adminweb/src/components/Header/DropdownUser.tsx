@@ -20,6 +20,11 @@ const DropdownUser = (props: {
         localStorage.clear();
         props.refreshAuth();
 
+        // Call logout
+        fetch("/api/auth/logout", {method: "GET"}).then(() => {
+            console.log("Logged out");
+        });
+
         // Redirect to login
         window.location.href = "/auth/signin";
     }
