@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import ChartThree from "../Charts/ChartThree";
 import ChartTwo from "../Charts/ChartTwo";
 import ChatCard from "../Chat/ChatCard";
@@ -9,6 +9,41 @@ import DataStatsOne from "@/components/DataStats/DataStatsOne";
 import ChartOne from "@/components/Charts/ChartOne";
 
 const ECommerce: React.FC = () => {
+
+    const [authenticated, setAuthenticated] = useState(false);
+
+    const authCheck = async () => {
+        const authData = localStorage.getItem("authData");
+
+        if (authData) {
+            console.log(authData);
+            const result = await fetch("/api/auth/validate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: authData,
+            });
+
+            if (result.status === 200) {
+                setAuthenticated(true);
+            }
+
+        }
+    }
+
+    // Check if user is authenticated
+    useEffect(() => {
+        authCheck().catch(console.error);
+    });
+
+    if (!authenticated) {
+        return (
+            <>
+            </>
+        )
+    }
+
   return (
     <>
       <DataStatsOne />

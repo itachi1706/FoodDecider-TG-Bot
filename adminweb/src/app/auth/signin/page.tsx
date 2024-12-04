@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Signin from "@/components/Auth/Signin";
 
 export const metadata: Metadata = {
@@ -51,18 +51,17 @@ const SignIn: React.FC = () => {
               </h1>
 
               <p className="w-full max-w-[375px] font-medium text-dark-4 dark:text-dark-6">
-                Please sign in to your account by completing the necessary
-                fields below
+                Please sign in via Telegram to your account
               </p>
 
               <div className="mt-31">
-                <Image
-                  src={"/images/grids/grid-02.svg"}
-                  alt="Logo"
-                  width={405}
-                  height={325}
-                  className="mx-auto dark:opacity-30"
-                />
+                {/*<Image*/}
+                {/*  src={"/images/grids/grid-02.svg"}*/}
+                {/*  alt="Logo"*/}
+                {/*  width={405}*/}
+                {/*  height={325}*/}
+                {/*  className="mx-auto dark:opacity-30"*/}
+                {/*/>*/}
               </div>
             </div>
           </div>
