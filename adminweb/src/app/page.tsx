@@ -1,4 +1,4 @@
-import ECommerce from "@/components/Dashboard/E-commerce";
+import DefaultDashboard from "@/components/Dashboard/DefaultDashboard";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <>
       <DefaultLayout>
-          <ECommerce />
+          <DefaultDashboard />
       </DefaultLayout>
     </>
   );
