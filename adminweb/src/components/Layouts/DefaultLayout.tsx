@@ -1,5 +1,5 @@
 "use client";
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import {authCheck} from "@/utils/authentication";
@@ -19,7 +19,7 @@ export default function DefaultLayout({
   }
 
   // Check if user is authenticated
-  useEffect(() => {
+  useMemo(() => {
     // console.log("Checking auth 3");
     authCheck().then(logged => setAuthenticated(logged)).catch(console.error);
   }, []);

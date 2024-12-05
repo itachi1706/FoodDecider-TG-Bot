@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
@@ -29,7 +29,7 @@ const DropdownUser = (props: {
         window.location.href = "/auth/signin";
     }
 
-    useEffect(() => {
+    useMemo(() => {
         // Get from local storage user data
         const authData = localStorage.getItem("authData");
         if (authData) {

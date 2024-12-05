@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import DataStatsBot from "@/components/DataStats/DataStatsBot";
 import {authCheck} from "@/utils/authentication";
 
@@ -8,7 +8,7 @@ const DefaultDashboard: React.FC = () => {
     const [authenticated, setAuthenticated] = useState(false);
 
     // Check if user is authenticated
-    useEffect(() => {
+    useMemo(() => {
         // console.log("Checking auth 1");
         authCheck().then(logged => setAuthenticated(logged)).catch(console.error);
     }, []);
