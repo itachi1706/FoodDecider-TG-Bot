@@ -9,8 +9,9 @@ const DefaultDashboard: React.FC = () => {
 
     // Check if user is authenticated
     useEffect(() => {
+        // console.log("Checking auth 1");
         authCheck().then(logged => setAuthenticated(logged)).catch(console.error);
-    });
+    }, []);
 
     if (!authenticated) {
         return (<></>)

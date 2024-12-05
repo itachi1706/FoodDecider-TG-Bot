@@ -3,7 +3,7 @@ export async function authCheck() : Promise<boolean> {
     const authData = localStorage.getItem("authData");
 
     if (authData) {
-        console.log(authData);
+        // console.log(authData);
         const result = await fetch("/api/auth/validate", {
             method: "POST",
             headers: {

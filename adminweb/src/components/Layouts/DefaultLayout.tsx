@@ -20,8 +20,9 @@ export default function DefaultLayout({
 
   // Check if user is authenticated
   useEffect(() => {
+    // console.log("Checking auth 3");
     authCheck().then(logged => setAuthenticated(logged)).catch(console.error);
-  });
+  }, []);
 
 
   return (

@@ -10,9 +10,19 @@ export async function POST(req: Request) {
 
     try {
         const user = await validator.validate(dataMap);
-        return Response.json(user);
+
+        const base64Data = Buffer.from(JSON.stringify(user)).toString("base64");
+
+        if (!cookieStore.has("auth")) {
+            cookieStore.set("auth", base64Data, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+            });
+        }
+        return Response.json({ message: "Logged in" });
     } catch (error) {
-        console.error("FAILED")
+        console.error("Failed Login")
         if (cookieStore.has("auth")) {
             cookieStore.delete("auth");
         }
