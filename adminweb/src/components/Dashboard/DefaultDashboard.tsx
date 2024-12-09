@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import DataStatsBot from "@/components/DataStats/DataStatsBot";
 import {authCheck} from "@/utils/authentication";
 

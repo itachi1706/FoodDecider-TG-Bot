@@ -160,3 +160,14 @@ CREATE TABLE rolls_history
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE web_auth_session
+(
+    id          VARCHAR(36) PRIMARY KEY,
+    telegram_id INT  NOT NULL,
+    data        TEXT NOT NULL,
+    created_at  TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+    status      ENUM ('A', 'D') DEFAULT 'A'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;

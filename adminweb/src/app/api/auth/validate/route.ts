@@ -1,12 +1,33 @@
-import {AuthDataValidator, objectToAuthDataMap} from "@telegram-auth/server";
+import {AuthDataMap, AuthDataValidator} from "@telegram-auth/server";
 import {cookies} from "next/headers";
+import {TelegramCookieData} from "@/types/tgcookiedata";
+import {getUserSession} from "@/utils/session";
 
 const validator = new AuthDataValidator({ botToken: process.env.BOT_TOKEN });
 
-export async function POST(req: Request) {
-    const rawData = await req.json();
-    const dataMap = objectToAuthDataMap(rawData);
+export async function POST() {
     const cookieStore = await cookies();
+
+    // Match with cookie data
+    const cookieData = cookieStore.get("auth");
+    console.log("Cookie data", cookieData);
+    if (cookieData == null) {
+        return Response.json({ error: "No auth cookie" }, { status: 401 });
+    }
+
+    const authData = JSON.parse(Buffer.from(cookieData.value, 'base64').toString('utf-8')) as TelegramCookieData;
+    console.log("Auth data", authData);
+    const userObject = await getUserSession(authData.uuid);
+    if (userObject == null) {
+        return Response.json({ error: "Failed to get user" }, { status: 403 });
+    }
+
+    console.log(userObject);
+
+    if (userObject.id != authData.id) {
+        return Response.json({ error: "User ID mismatch" }, { status: 403 });
+    }
+    const dataMap = new Map(JSON.parse(userObject.data_map)) as AuthDataMap;
 
     try {
         const user = await validator.validate(dataMap);

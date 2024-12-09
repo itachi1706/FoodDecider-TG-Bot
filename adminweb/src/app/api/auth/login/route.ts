@@ -1,5 +1,8 @@
 import {AuthDataValidator, objectToAuthDataMap} from "@telegram-auth/server";
 import {cookies} from "next/headers";
+import {checkIsAdmin} from "@/utils/users";
+import {TelegramCookieData} from "@/types/tgcookiedata";
+import {createLoginRecord} from "@/utils/session";
 
 const validator = new AuthDataValidator({ botToken: process.env.BOT_TOKEN });
 
@@ -11,15 +14,31 @@ export async function POST(req: Request) {
     try {
         const user = await validator.validate(dataMap);
 
-        const base64Data = Buffer.from(JSON.stringify(user)).toString("base64");
-
-        if (!cookieStore.has("auth")) {
-            cookieStore.set("auth", base64Data, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "strict",
-            });
+        // Check if user is admin (fail otherwise)
+        const adminChk = await checkIsAdmin(user.id);
+        if (!await checkIsAdmin(user.id)) {
+            return Response.json({ error: "User is not an admin" }, { status: 403 });
         }
+
+        const uuid = await createLoginRecord(user, adminChk, dataMap);
+        if (uuid == null) {
+            return Response.json({ error: "Failed to create login record" }, { status: 500 });
+        }
+
+        // Save base64 data to DB
+        const cookieData: TelegramCookieData = {
+            id: user.id,
+            is_admin: adminChk,
+            uuid: uuid,
+        }
+
+        const base64CookieData = Buffer.from(JSON.stringify(cookieData)).toString("base64");
+
+        cookieStore.set("auth", base64CookieData, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+        });
         return Response.json({ message: "Logged in" });
     } catch (error) {
         console.error("Failed Login")
