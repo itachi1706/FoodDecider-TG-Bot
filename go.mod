@@ -3,10 +3,11 @@ module FoodDecider-TG-Bot
 go 1.22
 
 require (
-	github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.30
+	github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.31
 	github.com/google/uuid v1.6.0
 	github.com/hellofresh/health-go/v5 v5.5.3
 	github.com/joho/godotenv v1.5.1
+	googlemaps.github.io/maps v1.7.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
 )
@@ -21,5 +22,4 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/text v0.20.0 // indirect
 	golang.org/x/time v0.0.0-20200416051211-89c76fbcd5d1 // indirect
-	googlemaps.github.io/maps v1.7.0 // indirect
 )
