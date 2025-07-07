@@ -3,7 +3,7 @@ module FoodDecider-TG-Bot
 go 1.22
 
 require (
-	github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.31
+	github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.33
 	github.com/google/uuid v1.6.0
 	github.com/hellofresh/health-go/v5 v5.5.3
 	github.com/joho/godotenv v1.5.1
