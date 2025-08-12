@@ -11,7 +11,7 @@ jobs:
       matrix:
         arch: [amd64, arm64, arm]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -37,7 +37,7 @@ jobs:
       cancel-in-progress: true
     if: github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
@@ -86,7 +86,7 @@ jobs:
       CLUSTER_NAME: ${{ vars.DIGITALOCEAN_K8S_CLUSTER_NAME }}
       CLUSTER_NAMESPACE: ${{ vars.DIGITALOCEAN_K8S_CLUSTER_NAMESPACE }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
