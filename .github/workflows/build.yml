@@ -22,7 +22,7 @@ jobs:
           GOARCH: ${{ matrix.arch }}
         run: go build -o outfile/$GOOS/$GOARCH/FoodDecider-TG-Bot
       - name: Upload to same artifact if master branch
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           name: go-build-${{ matrix.arch }}
